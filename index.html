@@ -13,34 +13,135 @@
     </head>
 
     <body>
-       <div id="myholder"></div>
+        <h1>M12</h1>
+       <div id="m12"></div>
   <script type="text/javascript">
 
     var graph = new joint.dia.Graph;
 
     var paper = new joint.dia.Paper({
-        el: $('#myholder'),
-        width: 600,
-        height: 200,
+        el: $('#m12'),
+        width: 1000,
+        height: 700,
         model: graph,
         gridSize: 1
     });
+ var m12 = new joint.shapes.devs.Model({
+    position: { x: 50, y: 50 },
+    size: { width: 500, height: 400 },
+    inPorts: ['in'],
+    outPorts: ['out'],
+    ports: {
+        groups: {
+            'in': {
+                attrs: {
+                    '.port-body': {
+                        fill: '#16A085'
+                    }
+                }
+            },
+            'out': {
+                attrs: {
+                    '.port-body': {
+                        fill: '#E74C3C'
+                    }
+                }
+            }
+        }
+    },
+    attrs: {
+        '.label': { text: 'M12', 'ref-x': .5, 'ref-y': .2 },
+        rect: { fill: '#C0D3D1' }
+    }
+});
 
-    var rect = new joint.shapes.basic.Rect({
-        position: { x: 100, y: 30 },
-        size: { width: 100, height: 30 },
-        attrs: { rect: { fill: 'blue' }, text: { text: 'my box', fill: 'white' } }
+var m1 = new joint.shapes.devs.Model({
+    position: { x: 50, y: 50 },
+    size: { width: 100, height: 100 },
+    inPorts: ['x1','x2'],
+    outPorts: ['out'],
+    ports: {
+        groups: {
+            'in': {
+                attrs: {
+                    '.port-body': {
+                        fill: '#16A085'
+                    }
+                }
+            },
+            'out': {
+                attrs: {
+                    '.port-body': {
+                        fill: '#E74C3C'
+                    }
+                }
+            }
+        }
+    },
+    attrs: {
+        '.label': { text: 'm1:M1', 'ref-x': .5, 'ref-y': .2 },
+        rect: { fill: '#73EBDB' }
+    }
+});
+
+var m2 = new joint.shapes.devs.Model({
+    position: { x: 50, y: 50 },
+    size: { width: 100, height: 100 },
+    inPorts: ['in'],
+    outPorts: ['out1','out2'],
+    ports: {
+        groups: {
+            'in': {
+                attrs: {
+                    '.port-body': {
+                        fill: '#16A085'
+                    }
+                }
+            },
+            'out': {
+                attrs: {
+                    '.port-body': {
+                        fill: '#E74C3C'
+                    }
+                }
+            }
+        }
+    },
+    attrs: {
+        '.label': { text: 'm2:M2', 'ref-x': .5, 'ref-y': .2 },
+        rect: { fill: '#73EBDB' }
+    }
+});
+
+ m12.embed(m1);
+ m12.embed(m2);
+ graph.addCell([m12,m1,m2]);
+
+
+
+
+ graph.on('change:position', function(cell) {
+
+    var parentId = cell.get('parent');
+    if (!parentId) return;
+
+    var parent = graph.getCell(parentId);
+    var parentBbox = parent.getBBox();
+    var cellBbox = cell.getBBox();
+
+    if (parentBbox.containsPoint(cellBbox.origin()) &&
+        parentBbox.containsPoint(cellBbox.topRight()) &&
+        parentBbox.containsPoint(cellBbox.corner()) &&
+        parentBbox.containsPoint(cellBbox.bottomLeft())) {
+
+        // All the four corners of the child are inside
+        // the parent area.
+        return;
+    }
+
+    // Revert the child position.
+    cell.set('position', cell.previous('position'));
     });
-
-    var rect2 = rect.clone();
-    rect2.translate(300);
-
-    var link = new joint.dia.Link({
-        source: { id: rect.id },
-        target: { id: rect2.id }
-    });
-
-    graph.addCells([rect, rect2, link]);
 
   </script>
 
