@@ -21,14 +21,15 @@
 
     var paper = new joint.dia.Paper({
         el: $('#m12'),
-        width: 1000,
+        width: 1250,
         height: 700,
         model: graph,
         gridSize: 1
     });
+
  var m12 = new joint.shapes.devs.Model({
     position: { x: 50, y: 50 },
-    size: { width: 500, height: 400 },
+    size: { width: 700, height: 400 },
     inPorts: ['in'],
     outPorts: ['out'],
     ports: {
@@ -56,7 +57,7 @@
 });
 
 var m1 = new joint.shapes.devs.Model({
-    position: { x: 50, y: 50 },
+    position: { x: 150, y: 200 },
     size: { width: 100, height: 100 },
     inPorts: ['x1','x2'],
     outPorts: ['out'],
@@ -85,7 +86,7 @@ var m1 = new joint.shapes.devs.Model({
 });
 
 var m2 = new joint.shapes.devs.Model({
-    position: { x: 50, y: 50 },
+    position: { x: 550, y: 200 },
     size: { width: 100, height: 100 },
     inPorts: ['in'],
     outPorts: ['out1','out2'],
@@ -118,8 +119,37 @@ var m2 = new joint.shapes.devs.Model({
  graph.addCell([m12,m1,m2]);
 
 
+    // links 
+    var l1 = new joint.shapes.devs.Link({
+        source: { id: m12.id, port: 'in'}, target: {id: m1.id,port: 'x1' },
+         attrs: {  '.connection': { stroke: 'blue' },
+    '.marker-source': { fill: 'red', d: 'M 10 0 L 0 5 L 10 10 z' },
+    '.marker-target': { fill: 'yellow', d: 'M 10 0 L 0 5 L 10 10 z' }},
+    });
+     var l2 = new joint.shapes.devs.Link({
+        source: { id: m1.id,port: 'in'}, target: {id: m2.id, port: 'out' },
+       attrs: {  '.connection': { stroke: 'blue' },
+    '.marker-source': { fill: 'red', d: 'M 10 0 L 0 5 L 10 10 z' },
+    '.marker-target': { fill: 'yellow', d: 'M 10 0 L 0 5 L 10 10 z' }},
+    });
 
+     var l3 = new joint.shapes.devs.Link({
+        source: { id: m1.id, port: 'x2' },  target: { id: m2.id,  port: 'out2'},
+         attrs: {  '.connection': { stroke: 'blue' },
+    '.marker-source': { fill: 'red', d: 'M 10 0 L 0 5 L 10 10 z' },
+    '.marker-target': { fill: 'yellow', d: 'M 10 0 L 0 5 L 10 10 z' }},
+   });
 
+     var l4 = new joint.shapes.devs.Link({ source: { id: m12.id,  port: 'out' },
+     target: { id: m2.id, port: 'out1' },
+      attrs: {  '.connection': { stroke: 'blue' },
+    '.marker-source': { fill: 'red', d: 'M 10 0 L 0 5 L 10 10 z' },
+    '.marker-target': { fill: 'yellow', d: 'M 10 0 L 0 5 L 10 10 z' }},
+    });
+    
+    graph.addCell([l1,l2,l3,l4]);
+   
+// m1 and m2 can't moove beyond m12
  graph.on('change:position', function(cell) {
 
     var parentId = cell.get('parent');
