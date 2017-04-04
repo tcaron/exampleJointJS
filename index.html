@@ -13,166 +13,167 @@
     </head>
 
     <body>
-        <h1>M12</h1>
-       <div id="m12"></div>
+        <h1>Figure 4</h1>
+       <div id="fig4"></div>
+
+
   <script type="text/javascript">
+    var graph = new joint.dia.Graph();
 
-    var graph = new joint.dia.Graph;
-
-    var paper = new joint.dia.Paper({
-        el: $('#m12'),
-        width: 1250,
-        height: 700,
-        model: graph,
-        gridSize: 1
-    });
-
- var m12 = new joint.shapes.devs.Model({
-    position: { x: 50, y: 50 },
-    size: { width: 700, height: 400 },
-    inPorts: ['in'],
-    outPorts: ['out'],
-    ports: {
-        groups: {
-            'in': {
-                attrs: {
-                    '.port-body': {
-                        fill: '#16A085'
-                    }
-                }
-            },
-            'out': {
-                attrs: {
-                    '.port-body': {
-                        fill: '#E74C3C'
-                    }
-                }
-            }
-        }
-    },
-    attrs: {
-        '.label': { text: 'M12', 'ref-x': .5, 'ref-y': .2 },
-        rect: { fill: '#C0D3D1' }
-    }
+var paper = new joint.dia.Paper({
+    el: $('#fig4'),
+    width: 1200,
+    height: 800,
+    gridSize: 1,
+    model: graph
 });
 
-var m1 = new joint.shapes.devs.Model({
-    position: { x: 150, y: 200 },
-    size: { width: 100, height: 100 },
-    inPorts: ['x1','x2'],
-    outPorts: ['out'],
-    ports: {
-        groups: {
-            'in': {
-                attrs: {
-                    '.port-body': {
-                        fill: '#16A085'
-                    }
-                }
-            },
-            'out': {
-                attrs: {
-                    '.port-body': {
-                        fill: '#E74C3C'
-                    }
-                }
+
+var uml = joint.shapes.uml;
+
+var container= new uml.State({
+position: { x:20  , y: 20 },
+size: { width: 1000, height: 700 },
+name: "figure 4",
+});
+var states = {
+
+    s0: new uml.StartState({
+        position: { x:20  , y: 20 },
+        size: { width: 30, height: 30 },
+        attrs: {
+            'circle': {
+                fill: '#4b4a67',
+                stroke: 'none'
             }
         }
-    },
-    attrs: {
-        '.label': { text: 'm1:M1', 'ref-x': .5, 'ref-y': .2 },
-        rect: { fill: '#73EBDB' }
-    }
-});
+    }),
 
-var m2 = new joint.shapes.devs.Model({
-    position: { x: 550, y: 200 },
-    size: { width: 100, height: 100 },
-    inPorts: ['in'],
-    outPorts: ['out1','out2'],
-    ports: {
-        groups: {
-            'in': {
-                attrs: {
-                    '.port-body': {
-                        fill: '#16A085'
-                    }
-                }
+    s1: new uml.State({
+        position: { x:100  , y: 100 },
+        size: { width: 200, height: 100 },
+        name: "state 1",
+        events: ["entry / init()","exit / destroy()"],
+        attrs: {
+            '.uml-state-body': {
+                fill: 'rgba(48, 208, 198, 0.1)',
+                stroke: 'rgba(48, 208, 198, 0.5)',
+                'stroke-width': 1.5
             },
-            'out': {
-                attrs: {
-                    '.port-body': {
-                        fill: '#E74C3C'
-                    }
-                }
+            '.uml-state-separator': {
+                stroke: 'rgba(48, 208, 198, 0.4)'
             }
         }
-    },
-    attrs: {
-        '.label': { text: 'm2:M2', 'ref-x': .5, 'ref-y': .2 },
-        rect: { fill: '#73EBDB' }
-    }
-});
+    }),
 
- m12.embed(m1);
- m12.embed(m2);
- graph.addCell([m12,m1,m2]);
+    s2: new uml.State({
+        position: { x:400  , y: 200 },
+        size: { width: 300, height: 300 },
+        name: "state 2",
+        events: ["entry / create()","exit / kill()","A / foo()","B / bar()"],
+        attrs: {
+            '.uml-state-body': {
+                fill: 'rgba(48, 208, 198, 0.1)',
+                stroke: 'rgba(48, 208, 198, 0.5)',
+                'stroke-width': 1.5
+            },
+            '.uml-state-separator': {
+                stroke: 'rgba(48, 208, 198, 0.4)'
+            }
+        }
+    }),
 
+    s3: new uml.State({
+        position: { x:130  , y: 400 },
+        size: { width: 160, height: 60 },
+        name: "state 3",
+        events: ["entry / create()","exit / kill()"],
+        attrs: {
+            '.uml-state-body': {
+                fill: 'rgba(48, 208, 198, 0.1)',
+                stroke: 'rgba(48, 208, 198, 0.5)',
+                'stroke-width': 1.5
+            },
+            '.uml-state-separator': {
+                stroke: 'rgba(48, 208, 198, 0.4)'
+            }
+        }
+    }),
 
-    // links 
-    var l1 = new joint.shapes.devs.Link({
-        source: { id: m12.id, port: 'in'}, target: {id: m1.id,port: 'x1' },
-         attrs: {  '.connection': { stroke: 'blue' },
-    '.marker-source': { fill: 'red', d: 'M 10 0 L 0 5 L 10 10 z' },
-    '.marker-target': { fill: 'yellow', d: 'M 10 0 L 0 5 L 10 10 z' }},
-    });
-     var l2 = new joint.shapes.devs.Link({
-        source: { id: m1.id,port: 'in'}, target: {id: m2.id, port: 'out' },
-       attrs: {  '.connection': { stroke: 'blue' },
-    '.marker-source': { fill: 'red', d: 'M 10 0 L 0 5 L 10 10 z' },
-    '.marker-target': { fill: 'yellow', d: 'M 10 0 L 0 5 L 10 10 z' }},
-    });
+    s4: new uml.State({
+        position: { x:530  , y: 400 },
+        size: { width: 160, height: 50 },
+        name: "sub state 4",
+        events: ["entry / create()"],
+        attrs: {
+            '.uml-state-body': {
+                fill: 'rgba(48, 208, 198, 0.1)',
+                stroke: 'rgba(48, 208, 198, 0.5)',
+                'stroke-width': 1.5
+            },
+            '.uml-state-separator': {
+                stroke: 'rgba(48, 208, 198, 0.4)'
+            }
+        }
+    }),
 
-     var l3 = new joint.shapes.devs.Link({
-        source: { id: m1.id, port: 'x2' },  target: { id: m2.id,  port: 'out2'},
-         attrs: {  '.connection': { stroke: 'blue' },
-    '.marker-source': { fill: 'red', d: 'M 10 0 L 0 5 L 10 10 z' },
-    '.marker-target': { fill: 'yellow', d: 'M 10 0 L 0 5 L 10 10 z' }},
-   });
+    se: new uml.EndState({
+        position: { x:750  , y: 550 },
+        size: { width: 30, height: 30 },
+        attrs: {
+            '.outer': {
+                stroke: "#4b4a67",
+                'stroke-width': 2
+            },
+            '.inner': {
+                fill: '#4b4a67'
+            }
+        }
+    })
 
-     var l4 = new joint.shapes.devs.Link({ source: { id: m12.id,  port: 'out' },
-     target: { id: m2.id, port: 'out1' },
-      attrs: {  '.connection': { stroke: 'blue' },
-    '.marker-source': { fill: 'red', d: 'M 10 0 L 0 5 L 10 10 z' },
-    '.marker-target': { fill: 'yellow', d: 'M 10 0 L 0 5 L 10 10 z' }},
-    });
-    
-    graph.addCell([l1,l2,l3,l4]);
-   
-// m1 and m2 can't moove beyond m12
- graph.on('change:position', function(cell) {
+};
 
-    var parentId = cell.get('parent');
-    if (!parentId) return;
+graph.addCell(container);
+_.each(states, function(c) { graph.addCell(c); });
+states.s2.embed(states.s4);
 
-    var parent = graph.getCell(parentId);
-    var parentBbox = parent.getBBox();
-    var cellBbox = cell.getBBox();
+var linkAttrs =  {
+    'fill': 'none',
+    'stroke-linejoin': 'round',
+    'stroke-width': '2',
+    'stroke': '#4b4a67'
+};
 
-    if (parentBbox.containsPoint(cellBbox.origin()) &&
-        parentBbox.containsPoint(cellBbox.topRight()) &&
-        parentBbox.containsPoint(cellBbox.corner()) &&
-        parentBbox.containsPoint(cellBbox.bottomLeft())) {
+var transitons = [
+    new uml.Transition({
+        source: { id: states.s0.id },
+        target: { id: states.s1.id },
+        attrs: {'.connection': linkAttrs }
+    }),
+    new uml.Transition({
+        source: { id: states.s1.id },
+        target: { id: states.s2.id },
+        attrs: {'.connection': linkAttrs }
+    }),
+    new uml.Transition({
+        source: { id: states.s1.id },
+        target: { id: states.s3.id },
+        attrs: {'.connection': linkAttrs }
+    }),
+    new uml.Transition({
+        source: { id: states.s3.id },
+        target: { id: states.s4.id },
+        attrs: {'.connection': linkAttrs }
+    }),
+    new uml.Transition({
+        source: { id: states.s2.id },
+        target: { id: states.se.id },
+        attrs: {'.connection': linkAttrs }
+    })
+];
 
-        // All the four corners of the child are inside
-        // the parent area.
-        return;
-    }
-
-    // Revert the child position.
-    cell.set('position', cell.previous('position'));
-    });
-
+/*container.embed([states.s0,states.s1,states.s2,states.s3,states.s4,states.se]);*/
+graph.addCells(transitons);
   </script>
 
  </body>
