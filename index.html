@@ -119,10 +119,24 @@
   var l1 = new joint.dia.Link({
       source: { id: figWait.id },
       target: { id: figSend.id },
+      attrs: {
+          '.marker-source': { fill: '#4b4a67', stroke: '#4b4a67', d: 'M 10 0 L 0 5 L 10 10 z' },
+          '.marker-target': { fill: '#4b4a67', stroke: '#4b4a67', d: 'M 10 0 L 0 5 L 10 10 z' }
+      },
+      labels: [
+          { position: 0.5, attrs: { text: { text: 'in?v@[p=F]/{n++}', fill: '#f6f6f6', 'font-family': 'sans-serif' }, rect: { stroke: '#7c68fc', 'stroke-width': 20, rx: 5, ry: 5 } }}
+      ]
   });
   var l2 = new joint.dia.Link({
       source: { id: figWait.id },
       target: { id: figSend.id },
+      attrs: {
+          '.marker-source': { fill: '#4b4a67', stroke: '#4b4a67', d: 'M 10 0 L 0 5 L 10 10 z' },
+          '.marker-target': { fill: '#4b4a67', stroke: '#4b4a67', d: 'M 10 0 L 0 5 L 10 10 z' }
+      },
+      labels: [
+          { position: 0.5, attrs: { text: { text: 'done?@[n≠0]/{p=F}', fill: '#f6f6f6', 'font-family': 'sans-serif' }, rect: { stroke: '#7c68fc', 'stroke-width': 20, rx: 5, ry: 5 } }}
+      ]
   });
   var l3 = new joint.dia.Link({
       source: { id: figSend.id, port:'in' },
@@ -138,9 +152,7 @@
       source: { id: figWait.id, port:'in' },
       target: { id: figWait.id, port:'out2'},
   });
-
-  l1.label(0, { position: .5, attrs: {text: { text: 'in?v@[p=F]/{n++}', 'font-size': 14, 'font-family': 'san-serif' }}});
-  l2.label(0, { position: .10, attrs: {text: { text: 'done?@[n≠0]/{p=F}', 'font-size': 14, 'font-family': 'san-serif' }}});
+  
   l3.label(0, { position: .10, attrs: {text: { text: 'in?v/{n++}', 'font-size': 14, 'font-family': 'san-serif' }}});
   l4.label(0, { position: .10, attrs: {text: { text: 'in?v@[p=B]/{n++}', 'font-size': 14, 'font-family': 'san-serif' }}});
   l5.label(0, { position: .10, attrs: {text: { text: 'done?@[n=0]/{p=F}', 'font-size': 14, 'font-family': 'san-serif' }}});
