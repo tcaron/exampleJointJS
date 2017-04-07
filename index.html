@@ -17,15 +17,57 @@
 
 
   <script type="text/javascript">
+      var graph = new joint.dia.Graph();
+      var paper = new joint.dia.Paper({
+          el: $('#fig4'),
+          width: 800,
+          height: 600,
+          model: graph,
+          gridSize: 1
+      });
+      function adjustVertices(graph, cell) {
+          cell = cell.model || cell;
+          if (cell instanceof joint.dia.Element) {
+              _.chain(graph.getConnectedLinks(cell)).groupBy(function(link) {
+                  return _.omit([link.get('source').id, link.get('target').id], cell.id)[0];
+              }).each(function(group, key) {
+                  if (key !== 'undefined') adjustVertices(graph, _.first(group));
+              });
+              return;
+          }
+          var srcId = cell.get('source').id || cell.previous('source').id;
+          var trgId = cell.get('target').id || cell.previous('target').id;
+          if (!srcId || !trgId) return;
 
-  var graph = new joint.dia.Graph();
-  var paper = new joint.dia.Paper({
-    el: $('#fig4'),
-    width: 800,
-    height: 600,
-    model: graph,
-    gridSize: 1
- });
+          var siblings = _.filter(graph.getLinks(), function(sibling) {
+              var _srcId = sibling.get('source').id;
+              var _trgId = sibling.get('target').id;
+              return (_srcId === srcId && _trgId === trgId) || (_srcId === trgId && _trgId === srcId);
+          });
+          switch (siblings.length) {
+              case 0:
+                  break;
+              case 1:
+                  cell.unset('vertices');
+                  break;
+              default:
+                  var srcCenter = graph.getCell(srcId).getBBox().center();
+                  var trgCenter = graph.getCell(trgId).getBBox().center();
+                  var midPoint = g.line(srcCenter, trgCenter).midpoint();
+                  var theta = srcCenter.theta(trgCenter);
+                  var gap = 60;
+                  _.each(siblings, function(sibling, index) {
+                      var offset = gap * Math.ceil(index / 2);
+                      var sign = index % 2 ? 1 : -1;
+                      var angle = g.toRad(theta + sign * 90);
+                      var vertex = g.point.fromPolar(offset, angle, midPoint);
+                      sibling.set('vertices', [{ x: vertex.x, y: vertex.y }]);
+                  });
+          }
+      };
+      var myAdjustVertices = _.partial(adjustVertices, graph);
+      graph.on('add remove change:source change:target', myAdjustVertices);
+      paper.on('cell:pointerup', myAdjustVertices);
 
   var fig4 = new joint.shapes.devs.Model({
       position: { x: 50, y: 50 },
@@ -58,109 +100,67 @@
 
   });
 
+  var uml = joint.shapes.uml;
 
-  var figWait = new joint.shapes.devs.Model({
-      position: { x: 50, y: 50 },
+  var wait = new uml.State({
+      position: { x:100  , y: 250 },
       size: { width: 100, height: 100 },
-      inPorts:['in'],
-      outPorts:['out1','out2'],
-      ports: {
-          groups: {
-              'in': {
-                  attrs: {
-                      '.port-body': {
-                          fill: '#16A085'
-                      }
-                  }
-              },
-              'out': {
-                  attrs: {
-                      '.port-body': {
-                          fill: '#E74C3C'
-                      }
-                  }
-              }
-          }
-      },
-      attrs: {
-          '.label': { text: 'Wait', 'ref-x': .5, 'ref-y': .2 },
-          rect: { fill: '#BCC9C8' }
-      }
+      name: "Wait",
   });
-  var figSend = new joint.shapes.devs.Model({
-      position: { x: 50, y: 50 },
+
+  var send =new uml.State({
+      position: { x:450  , y: 250 },
       size: { width: 100, height: 100 },
-      inPorts:['in'],
-      outPorts:['out1'],
-      ports: {
-          groups: {
-              'in': {
-                  attrs: {
-                      '.port-body': {
-                          fill: '#16A085'
-                      }
-                  }
-              },
-              'out': {
-                  attrs: {
-                      '.port-body': {
-                          fill: '#E74C3C'
-                      }
-                  }
-              }
-          }
-      },
-      attrs: {
-          '.label': { text: 'Send', 'ref-x': .5, 'ref-y': .2 },
-          rect: { fill: '#BCC9C8' }
-      }
+      name: "Send",
   });
+  fig4.embed(wait);
+  fig4.embed(send);
 
-  var l1 = new joint.dia.Link({
-      source: { id: figWait.id },
-      target: { id: figSend.id },
-      attrs: {
-          '.marker-source': { fill: '#4b4a67', stroke: '#4b4a67', d: 'M 10 0 L 0 5 L 10 10 z' },
-          '.marker-target': { fill: '#4b4a67', stroke: '#4b4a67', d: 'M 10 0 L 0 5 L 10 10 z' }
-      },
-      labels: [
-          { position: 0.5, attrs: { text: { text: 'in?v@[p=F]/{n++}', fill: '#f6f6f6', 'font-family': 'sans-serif' }, rect: { stroke: '#7c68fc', 'stroke-width': 20, rx: 5, ry: 5 } }}
-      ]
+  var linkAttrs =  {
+      'fill': 'none',
+      'stroke-linejoin': 'round',
+      'stroke-width': '2',
+      'stroke': '#4b4a67'
+  };
+  var t1 =  new uml.Transition({
+          source: { id: wait.id },
+          target: { id: send.id },
+          attrs: {'.connection': linkAttrs }
+      });
+  var t2 = t1.clone();
+  var t3 =  new uml.Transition({
+      source: { id: send.id },
+      target: { id: wait.id },
+      attrs: {'.connection': linkAttrs }
   });
-  var l2 = new joint.dia.Link({
-      source: { id: figWait.id },
-      target: { id: figSend.id },
-      attrs: {
-          '.marker-source': { fill: '#4b4a67', stroke: '#4b4a67', d: 'M 10 0 L 0 5 L 10 10 z' },
-          '.marker-target': { fill: '#4b4a67', stroke: '#4b4a67', d: 'M 10 0 L 0 5 L 10 10 z' }
-      },
-      labels: [
-          { position: 0.5, attrs: { text: { text: 'done?@[n≠0]/{p=F}', fill: '#f6f6f6', 'font-family': 'sans-serif' }, rect: { stroke: '#7c68fc', 'stroke-width': 20, rx: 5, ry: 5 } }}
-      ]
+  var t4 =  new uml.Transition({
+      position:{x: 120 , y:120},
+      source: { id: send.id },
+      target: { id: send.id },
+      attrs: {'.connection': linkAttrs }
   });
-  var l3 = new joint.dia.Link({
-      source: { id: figSend.id, port:'in' },
-      target: { id: figSend.id, port:'out1'},
+  var t5 = new uml.Transition({
+      source: { id: wait.id },
+      target: { id: wait.id },
+      attrs: {'.connection': linkAttrs }
   });
+  var t6 = t5.clone();
 
-  var l4 = new joint.dia.Link({
-      source: { id: figWait.id, port:'in' },
-      target: { id: figWait.id, port:'out1'},
-  });
-
-  var l5 = new joint.dia.Link({
-      source: { id: figWait.id, port:'in' },
-      target: { id: figWait.id, port:'out2'},
-  });
-  
-  l3.label(0, { position: .10, attrs: {text: { text: 'in?v/{n++}', 'font-size': 14, 'font-family': 'san-serif' }}});
-  l4.label(0, { position: .10, attrs: {text: { text: 'in?v@[p=B]/{n++}', 'font-size': 14, 'font-family': 'san-serif' }}});
-  l5.label(0, { position: .10, attrs: {text: { text: 'done?@[n=0]/{p=F}', 'font-size': 14, 'font-family': 'san-serif' }}});
-  fig4.embed(figWait,figSend);
-  graph.addCell([fig4,figSend,figWait,l1,l2,l3,l4,l5]);
-
-
-
+  t1.label(0, { position: 0.5, attrs: {text: { text: 'in?v@[p=F]/{n++}', 'font-size': 14, 'font-family': 'san-serif' }}});
+  t2.label(0, { position: 0.5, attrs: {text: { text: 'done?@[n≠0]/{p=F}', 'font-size': 14, 'font-family': 'san-serif' }}});
+  t3.label(0, { position: 0.5, attrs: {text: { text: 'out!w/{n--,p=B}', 'font-size': 14, 'font-family': 'san-serif' }}});
+  t4.label(0, { position: 0.5, attrs: {text: { text: 'in?v/{n++}', 'font-size': 14, 'font-family': 'san-serif' }}});
+  t5.label(0, { position: 0.5, attrs: {text: { text: 'in?v@[p=B]/{n++}', 'font-size': 14, 'font-family': 'san-serif' }}});
+  t6.label(0, { position: 0.5, attrs: {text: { text: 'done?@[n=0]/{p=F}', 'font-size': 14, 'font-family': 'san-serif' }}});
+      t4.attr({
+          '.connection': { stroke: '#7c68fc', 'stroke-width': 2 },
+          '.marker-source': { stroke: '#7c68fc', fill: '#7c68fc', d: 'M24.316,5.318,9.833,13.682,9.833,5.5,5.5,5.5,5.5,25.5,9.833,25.5,9.833,17.318,24.316,25.682z' },
+          '.marker-target': { stroke: '#feb663', fill: '#feb663', d: 'M14.615,4.928c0.487-0.986,1.284-0.986,1.771,0l2.249,4.554c0.486,0.986,1.775,1.923,2.864,2.081l5.024,0.73c1.089,0.158,1.335,0.916,0.547,1.684l-3.636,3.544c-0.788,0.769-1.28,2.283-1.095,3.368l0.859,5.004c0.186,1.085-0.459,1.553-1.433,1.041l-4.495-2.363c-0.974-0.512-2.567-0.512-3.541,0l-4.495,2.363c-0.974,0.512-1.618,0.044-1.432-1.041l0.858-5.004c0.186-1.085-0.307-2.6-1.094-3.368L3.93,13.977c-0.788-0.768-0.542-1.525,0.547-1.684l5.026-0.73c1.088-0.158,2.377-1.095,2.864-2.081L14.615,4.928z' }
+      });
+      t3.attr({
+          '.connection': { stroke: '#4b4a67', 'stroke-width': 3, 'stroke-dasharray': '5 2' },
+      });
+  graph.addCell([fig4,wait,send,t1,t2,t3,t4,t5,t6]);
 
   </script>
 
