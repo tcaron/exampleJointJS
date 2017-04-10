@@ -13,15 +13,14 @@
 </head>
 
 <body>
-    <h1>Figure 4</h1>
-    <div id="fig4"></div>
+    <h1>Figure 6</h1>
+    <div id="fig6"></div>
 
-
-    <script type="text/javascript">
+    <script>
         var graph = new joint.dia.Graph();
 
         var paper = new joint.dia.Paper({
-            el: $('#fig4'),
+            el: $('#fig6'),
             width: 800,
             height: 800,
             model: graph,
@@ -29,43 +28,150 @@
             snapLinks: true,
             linkPinning: false,
         });
-        var editor;
-        var coupled;
-        var atomicModels = {};
-        var path = [];
 
-        joint.shapes.devs.Model = joint.shapes.devs.Model.extend({
-            defaults: joint.util.deepSupplement({
-                markup: '<g class="rotatable"><g class="scalable"><rect class="body"/></g><text class="label"/><g class="inPorts"/><g class="outPorts"/></g>',
-                portMarkup: '<g class="port"><path class="port-body" d="M -5 -10 5 -10 5 10 -5 10 z"/></g>',
-                type: 'devs.Model'
-            }, joint.shapes.devs.Model.prototype.defaults)
-        });
-        joint.shapes.devs.NewModelView = joint.shapes.devs.ModelView;
-        var uml = joint.shapes.uml;
-        var fig4 = new joint.shapes.devs.Model({
+        var wait = new joint.shapes.devs.Model({
             position: {
                 x: 70,
                 y: 70
             },
             size: {
-                width: 600,
-                height: 600
+                width: 250,
+                height: 300
             },
-            inPorts: ['in:Job', 'done'],
-            outPorts: ['out'],
             attrs: {
                 '.label': {
-                    text: 'ADBuffer',
+                    text: 'WAIT',
                     'ref-x': .5,
-                    'ref-y': .1
+                    'ref-y': .9
                 },
-                rect: {
-                    fill: '#D5CECC'
-                }
             }
 
+        });
 
+        var uml = joint.shapes.uml;
+        var busyWait = new uml.State({
+            position: {
+                x: 120,
+                y: 120
+            },
+            size: {
+                width: 100,
+                height: 50
+            },
+            name: "BUSY_WAIT",
+            events: ["+infini"],
+        });
+
+        var freeWait = new uml.State({
+            position: {
+                x: 170,
+                y: 240
+            },
+            size: {
+                width: 100,
+                height: 50
+            },
+            name: "FREE_WAIT",
+            events: ["+infini"],
+        });
+
+        var send = new uml.State({
+            position: {
+                x: 420,
+                y: 200
+            },
+            size: {
+                width: 100,
+                height: 50
+            },
+            name: "SEND",
+            events: ["@tsend"],
+        });
+
+        var t1 = new uml.Transition({
+            source: {
+                id: busyWait.id
+            },
+            target: {
+                id: freeWait.id
+            },
+        });
+
+        var t2 = new uml.Transition({
+            source: {
+                id: busyWait.id
+            },
+            target: {
+                id: send.id
+            },
+        });
+
+        var t3 = new uml.Transition({
+            source: {
+                id: freeWait.id
+            },
+            target: {
+                id: send.id
+            },
+        });
+
+        var t4 = new uml.Transition({
+            source: {
+                id: send.id
+            },
+            target: {
+                id: busyWait.id
+            },
+        });
+        t4.attr({
+            '.connection': {
+                stroke: '#4b4a67',
+                'stroke-width': 3,
+                'stroke-dasharray': '5 2'
+            },
+        });
+        wait.embed(busyWait);
+        wait.embed(freeWait);
+        t1.label(0, {
+            position: 0.5,
+            attrs: {
+                text: {
+                    text: 'done? @[n=0]/{p=F}',
+                    'font-size': 14,
+                    'font-family': 'san-serif'
+                }
+            }
+        });
+        t2.label(0, {
+            position: 0.5,
+            attrs: {
+                text: {
+                    text: 'done? @/{p=F}',
+                    'font-size': 14,
+                    'font-family': 'san-serif'
+                }
+            }
+        });
+        t3.label(0, {
+            position: 0.5,
+            attrs: {
+                text: {
+                    text: 'in?/{n++}',
+                    'font-size': 14,
+                    'font-family': 'san-serif'
+                }
+            }
+        });
+
+        t4.label(0, {
+            position: 0.5,
+            attrs: {
+                text: {
+                    text: 'out!/{n--,p=B}',
+                    'font-size': 14,
+                    'font-family': 'san-serif'
+                }
+            }
         });
 
         function LinkWithSameDestination(source, target, label, vertices) {
@@ -91,118 +197,24 @@
             return cell;
         }
 
-
-        var wait = new uml.State({
-            position: {
-                x: 200,
-                y: 250
-            },
-            size: {
-                width: 100,
-                height: 100
-            },
-            name: "WAIT @infini",
-        });
-
-        var send = new uml.State({
-            position: {
-                x: 450,
-                y: 250
-            },
-            size: {
-                width: 100,
-                height: 100
-            },
-            name: "Send @tSend",
-        });
-        fig4.embed(wait);
-        fig4.embed(send);
-
-        var t1 = new uml.Transition({
-            source: {
-                id: wait.id
-            },
-            target: {
-                id: send.id
-            },
-        });
-        var t2 = t1.clone();
-        var t3 = new uml.Transition({
-            source: {
-                id: send.id
-            },
-            target: {
-                id: wait.id
-            },
-        });
-        t1.label(0, {
-            position: 0.5,
-            attrs: {
-                text: {
-                    text: 'in?v@[p=F]/{n++}',
-                    'font-size': 14,
-                    'font-family': 'san-serif'
-                }
-            }
-        });
-        t2.label(0, {
-            position: 0.5,
-            attrs: {
-                text: {
-                    text: 'done?@[n≠0]/{p=F}',
-                    'font-size': 14,
-                    'font-family': 'san-serif'
-                }
-            }
-        });
-        t3.label(0, {
-            position: 0.5,
-            attrs: {
-                text: {
-                    text: 'out!w/{n--,p=B}',
-                    'font-size': 14,
-                    'font-family': 'san-serif'
-                }
-            }
-        });
-
-        t3.attr({
-            '.connection': {
-                stroke: '#4b4a67',
-                'stroke-width': 3,
-                'stroke-dasharray': '5 2'
-            },
-        });
-
-        var t4 = LinkWithSameDestination(send, send, 'in?v/{n++}', [{
-            x: 480,
-            y: 210
+        var t5 = LinkWithSameDestination(busyWait, busyWait, 'in?@/{n++}', [{
+            x: 300,
+            y: 40
         }, {
-            x: 510,
-            y: 215
+            x: 370,
+            y: 70
         }]);
 
-        var t5 = LinkWithSameDestination(wait, wait, 'in?v@[p=B]/{n++}', [{
-            x: 220,
-            y: 250
+        var t6 = LinkWithSameDestination(send, send, 'in?/{n++}', [{
+            x: 400,
+            y: 300
         }, {
-            x: 220,
-            y: 210
+            x: 470,
+            y: 310
         }]);
 
-        var t6 = LinkWithSameDestination(wait, wait, 'done?@[n=0]/{p=F}', [{
-            x: 100,
-            y: 400
-        }, {
-            x: 200,
-            y: 405
-        }]);
-
-
-        fig4.embed(t4);
-        fig4.embed(t5);
-        fig4.embed(t6);
-        graph.addCell([fig4, wait, send, t4, t5, t6]);
+        wait.embed(t5);
+        graph.addCell([wait, busyWait, freeWait, send, t5, t6]);
 
         function adjustVertices(graph, cell) {
 
@@ -256,7 +268,7 @@
                     var trgCenter = graph.getCell(trgId).getBBox().center();
                     var midPoint = g.line(srcCenter, trgCenter).midpoint();
                     var theta = srcCenter.theta(trgCenter);
-                    var gap = 60;
+                    var gap = 30;
                     _.each(siblings, function(sibling, index) {
                         var offset = gap * Math.ceil(index / 2);
                         var sign = index % 2 ? 1 : -1;
@@ -271,11 +283,7 @@
         };
         var myAdjustVertices = _.partial(adjustVertices, graph);
         graph.on('add remove change:source change:target', myAdjustVertices);
-        paper.on('cell:pointerup', myAdjustVertices);
-
-        graph.addCell([t1, t2, t3]);
+        // paper.on('cell:pointerup', myAdjustVertices);
+        graph.addCell([t1, t2, t4, t3]);
     </script>
-
 </body>
-
-</html>
