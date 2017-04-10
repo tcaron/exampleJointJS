@@ -21,6 +21,10 @@
     font-size: 12px;
 }
 
+.port-body {
+    fill: blue !important;
+}
+
 .joint-type-devs .port-body {
     stroke: #000000;
     stroke-width: 1px;
@@ -46,6 +50,7 @@
     fill: #feb663;
 }
 
+
 /* links */
 
 .joint-link .connection {
@@ -66,6 +71,7 @@
 .joint-link .link-tools .link-tool .tool-remove circle {
     fill: #fe854f;
 }
+
 
 /* highlighting */
 
