@@ -4,22 +4,25 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Figure 7</title>
-    <link rel="stylesheet" href="css/joint.min.css">
-    <script src="js/jquery-3.2.0.min.js"></script>
-    <script src="js/index.js"></script>
-    <script src="js/backbone.js"></script>
-    <script src="js/joint.min.js"></script>
-    <script src="js/joint.min.js"></script>
+    <title>Figure 4</title>
+    <link rel="stylesheet" href="../css/joint.min.css">
+    <script src="../js/jquery-3.2.0.min.js"></script>
+    <script src="../js/index.js"></script>
+    <script src="../js/backbone.js"></script>
+    <script src="../js/joint.min.js"></script>
+    <script src="../js/joint.min.js"></script>
 </head>
 
 <body>
-    <h1>Figure 7</h1>
-    <div id="fig7"></div>
-    <script>
+    <h1>Figure 4</h1>
+    <div id="fig4"></div>
+
+
+    <script type="text/javascript">
         var graph = new joint.dia.Graph();
+
         var paper = new joint.dia.Paper({
-            el: $('#fig7'),
+            el: $('#fig4'),
             width: 800,
             height: 800,
             model: graph,
@@ -27,6 +30,10 @@
             snapLinks: true,
             linkPinning: false,
         });
+        var editor;
+        var coupled;
+        var atomicModels = {};
+        var path = [];
 
         joint.shapes.devs.Model = joint.shapes.devs.Model.extend({
             defaults: joint.util.deepSupplement({
@@ -36,6 +43,31 @@
             }, joint.shapes.devs.Model.prototype.defaults)
         });
         joint.shapes.devs.NewModelView = joint.shapes.devs.ModelView;
+        var uml = joint.shapes.uml;
+        var fig4 = new joint.shapes.devs.Model({
+            position: {
+                x: 70,
+                y: 70
+            },
+            size: {
+                width: 600,
+                height: 600
+            },
+            inPorts: ['in:Job', 'done'],
+            outPorts: ['out'],
+            attrs: {
+                '.label': {
+                    text: 'ADBuffer',
+                    'ref-x': .5,
+                    'ref-y': .1
+                },
+                rect: {
+                    fill: '#D5CECC'
+                }
+            }
+
+
+        });
 
         function LinkWithSameDestination(source, target, label, vertices) {
 
@@ -60,59 +92,11 @@
             return cell;
         }
 
-        var contains = new joint.shapes.devs.Model({
-            position: {
-                x: 70,
-                y: 70
-            },
-            size: {
-                width: 450,
-                height: 500
-            }
-        });
-
-        var aBuffer = new joint.shapes.devs.Model({
-            position: {
-                x: 70,
-                y: 70
-            },
-            size: {
-                width: 450,
-                height: 250
-            },
-            inPorts: ['in:Job', 'done'],
-            outPorts: ['out'],
-            attrs: {
-                '.label': {
-                    text: 'ABuffer',
-                    'ref-x': .5,
-                    'ref-y': .0
-                },
-            }
-        });
-
-        var parallels = new joint.shapes.devs.Model({
-            position: {
-                x: 70,
-                y: 70
-            },
-            size: {
-                width: 450,
-                height: 250
-            },
-        });
-
-
-        var editor;
-        var coupled;
-        var atomicModels = {};
-        var path = [];
-        var uml = joint.shapes.uml;
 
         var wait = new uml.State({
             position: {
-                x: 120,
-                y: 150
+                x: 200,
+                y: 250
             },
             size: {
                 width: 100,
@@ -124,41 +108,18 @@
 
         var send = new uml.State({
             position: {
-                x: 360,
-                y: 150
+                x: 450,
+                y: 250
             },
             size: {
                 width: 100,
                 height: 100
             },
-            name: "SEND",
+            name: "Send",
             events: ["+@tSend"],
         });
-
-        var count = new uml.State({
-            position: {
-                x: 120,
-                y: 420
-            },
-            size: {
-                width: 100,
-                height: 100
-            },
-            name: "COUNT",
-            events: ["+@infini"],
-        });
-
-        var end = new uml.State({
-            position: {
-                x: 360,
-                y: 420
-            },
-            size: {
-                width: 100,
-                height: 100
-            },
-            name: "END",
-        });
+        fig4.embed(wait);
+        fig4.embed(send);
 
         var t1 = new uml.Transition({
             source: {
@@ -168,7 +129,8 @@
                 id: send.id
             },
         });
-        var t2 = new uml.Transition({
+        var t2 = t1.clone();
+        var t3 = new uml.Transition({
             source: {
                 id: send.id
             },
@@ -176,36 +138,11 @@
                 id: wait.id
             },
         });
-        var t7 = new uml.Transition({
-            source: {
-                id: count.id
-            },
-            target: {
-                id: end.id
-            },
-        });
-        t7.label(0, {
-            position: 0.5,
-            attrs: {
-                text: {
-                    text: 'in ? @[c = MAX]',
-                    'font-size': 14,
-                    'font-family': 'san-serif'
-                }
-            }
-        });
-        t2.attr({
-            '.connection': {
-                stroke: '#4b4a67',
-                'stroke-width': 3,
-                'stroke-dasharray': '5 2'
-            },
-        });
         t1.label(0, {
             position: 0.5,
             attrs: {
                 text: {
-                    text: 'done? @[n≠0]/{p=F}',
+                    text: 'in?v@[p=F]/{n++}',
                     'font-size': 14,
                     'font-family': 'san-serif'
                 }
@@ -215,68 +152,60 @@
             position: 0.5,
             attrs: {
                 text: {
-                    text: 'out! w/{n--,p=B}',
+                    text: 'done?@[n≠0]/{p=F}',
                     'font-size': 14,
                     'font-family': 'san-serif'
                 }
             }
         });
-        var t3 = LinkWithSameDestination(send, send, 'in?v/{n++}', [{
-            x: 420,
-            y: 110
-        }, {
-            x: 430,
-            y: 130
-        }]);
-        var t4 = LinkWithSameDestination(wait, wait, 'in?v@[p=B]/{n++}', [{
-            x: 180,
-            y: 110
-        }, {
-            x: 200,
-            y: 120
-        }]);
-
-        var t5 = LinkWithSameDestination(wait, wait, 'done?@[n=0]/{p=F}', [{
-            x: 100,
-            y: 270
-        }, {
-            x: 150,
-            y: 300
-        }]);
-
-        var t6 = LinkWithSameDestination(count, count, 'in?@[c<MAX]/{c++}', [{
-            x: 150,
-            y: 370
-        }, {
-            x: 170,
-            y: 380
-        }]);
-
-        var cutModels = new joint.shapes.basic.Rect({
-            position: {
-                x: 70,
-                y: 330
-            },
-            size: {
-                width: 450,
-                height: 0.5
+        t3.label(0, {
+            position: 0.5,
+            attrs: {
+                text: {
+                    text: 'out!w/{n--,p=B}',
+                    'font-size': 14,
+                    'font-family': 'san-serif'
+                }
             }
         });
 
-        aBuffer.embed(wait);
-        aBuffer.embed(send);
-        aBuffer.embed(count);
-        aBuffer.embed(end);
-        aBuffer.embed(t1);
-        aBuffer.embed(t2);
-        aBuffer.embed(t3);
-        aBuffer.embed(t4);
-        aBuffer.embed(t5);
-        aBuffer.embed(t6);
-        aBuffer.embed(t7);
-        contains.embed(aBuffer);
-        contains.embed(parallels);
-        graph.addCells([contains, parallels, aBuffer, wait, send, t3, t4, t5, count, end, t6]);
+        t3.attr({
+            '.connection': {
+                stroke: '#4b4a67',
+                'stroke-width': 3,
+                'stroke-dasharray': '5 2'
+            },
+        });
+
+        var t4 = LinkWithSameDestination(send, send, 'in?v/{n++}', [{
+            x: 480,
+            y: 210
+        }, {
+            x: 510,
+            y: 215
+        }]);
+
+        var t5 = LinkWithSameDestination(wait, wait, 'in?v@[p=B]/{n++}', [{
+            x: 220,
+            y: 250
+        }, {
+            x: 220,
+            y: 210
+        }]);
+
+        var t6 = LinkWithSameDestination(wait, wait, 'done?@[n=0]/{p=F}', [{
+            x: 100,
+            y: 400
+        }, {
+            x: 200,
+            y: 405
+        }]);
+
+
+        fig4.embed(t4);
+        fig4.embed(t5);
+        fig4.embed(t6);
+        graph.addCell([fig4, wait, send, t4, t5, t6]);
 
         function adjustVertices(graph, cell) {
 
@@ -345,6 +274,11 @@
         };
         var myAdjustVertices = _.partial(adjustVertices, graph);
         graph.on('add remove change:source change:target', myAdjustVertices);
-        graph.addCells([t1, t2, t7]);
+        // paper.on('cell:pointerup', myAdjustVertices);
+
+        graph.addCell([t1, t2, t3]);
     </script>
+
 </body>
+
+</html>
