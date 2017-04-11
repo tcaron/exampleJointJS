@@ -1,0 +1,243 @@
+<html lang="fr">
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Figure 12</title>
+    <link rel="stylesheet" href="../css/joint.min.css">
+    <script src="../js/jquery-3.2.0.min.js"></script>
+    <script src="../js/index.js"></script>
+    <script src="../js/backbone.js"></script>
+    <script src="../js/joint.min.js"></script>
+    <script src="../js/joint.min.js"></script>
+</head>
+
+<body>
+    <h1>Figure 12</h1>
+    <div id="fig12"></div>
+    <script>
+        var graph = new joint.dia.Graph();
+        var paper = new joint.dia.Paper({
+            el: $('#fig12'),
+            width: 800,
+            height: 800,
+            model: graph,
+            gridSize: 1,
+            snapLinks: true,
+            linkPinning: false,
+        });
+        var editor;
+        var coupled;
+        var atomicModels = {};
+        var path = [];
+
+        joint.shapes.devs.Model = joint.shapes.devs.Model.extend({
+            defaults: joint.util.deepSupplement({
+                markup: '<g class="rotatable"><g class="scalable"><rect class="body"/></g><text class="label"/><g class="inPorts"/><g class="outPorts"/></g>',
+                portMarkup: '<g class="port"><path class="port-body" d="M -5 -10 5 -10 5 10 -5 10 z"/></g>',
+                type: 'devs.Model'
+            }, joint.shapes.devs.Model.prototype.defaults)
+        });
+        joint.shapes.devs.NewModelView = joint.shapes.devs.ModelView;
+        var uml = joint.shapes.uml;
+
+        function LinkWithSameDestination(source, target, label, vertices) {
+
+            var cell = new joint.shapes.fsa.Arrow({
+                source: {
+                    id: source.id
+                },
+                target: {
+                    id: target.id
+                },
+                labels: [{
+                    position: .5,
+                    attrs: {
+                        text: {
+                            text: label || '',
+                            'font-weight': 'bold'
+                        }
+                    }
+                }],
+                vertices: vertices || []
+            });
+            return cell;
+        }
+        var fig12 = new joint.shapes.devs.Model({
+            position: {
+                x: 70,
+                y: 70
+            },
+            size: {
+                width: 600,
+                height: 400
+            },
+            inPorts: ['in:Job'],
+            outPorts: ['out:Job'],
+            attrs: {
+                '.label': {
+                    text: 'AProcessor',
+                    'ref-x': .5,
+                    'ref-y': .0
+                },
+                rect: {
+                    fill: '#D5CECC'
+                }
+            }
+
+
+        });
+        var free = new uml.State({
+            position: {
+                x: 150,
+                y: 200
+            },
+            size: {
+                width: 100,
+                height: 100
+            },
+            name: "FREE",
+            events: ["+@infini"],
+        });
+
+        var busy = new uml.State({
+            position: {
+                x: 500,
+                y: 200
+            },
+            size: {
+                width: 100,
+                height: 100
+            },
+            name: "BUSY",
+            events: ["@tproc"],
+        });
+
+        var t1 = new uml.Transition({
+            source: {
+                id: free.id
+            },
+            target: {
+                id: busy.id
+            },
+        });
+        var t2 = new uml.Transition({
+            source: {
+                id: busy.id
+            },
+            target: {
+                id: free.id
+            },
+        });
+        t1.label(0, {
+            position: 0.5,
+            attrs: {
+                text: {
+                    text: 'in?job/{p=RUNNING,current=job}',
+                    'font-size': 14,
+                    'font-family': 'san-serif'
+                }
+            }
+        });
+        t2.label(0, {
+            position: 0.5,
+            attrs: {
+                text: {
+                    text: 'out!current/{p=IDLE,current=NULL}',
+                    'font-size': 14,
+                    'font-family': 'san-serif'
+                }
+            }
+        });
+        t2.attr({
+            '.connection': {
+                stroke: '#4b4a67',
+                'stroke-width': 3,
+                'stroke-dasharray': '5 2'
+            },
+        });
+        fig12.embed(free);
+        fig12.embed(busy);
+        fig12.embed(t1);
+        fig12.embed(t2);
+
+        function adjustVertices(graph, cell) {
+
+            // If the cell is a view, find its model.
+            cell = cell.model || cell;
+
+            if (cell instanceof joint.dia.Element) {
+
+                _.chain(graph.getConnectedLinks(cell)).groupBy(function(link) {
+                    // the key of the group is the model id of the link's source or target, but not our cell id.
+                    return _.omit([link.get('source').id, link.get('target').id], cell.id)[0];
+                }).each(function(group, key) {
+                    // If the member of the group has both source and target model adjust vertices.
+                    if (key !== 'undefined') adjustVertices(graph, _.first(group));
+                });
+
+                return;
+            }
+
+            // The cell is a link. Let's find its source and target models.
+            var srcId = cell.get('source').id || cell.previous('source').id;
+            var trgId = cell.get('target').id || cell.previous('target').id;
+
+            // If one of the ends is not a model, the link has no siblings.
+            if (!srcId || !trgId) return;
+
+            var siblings = _.filter(graph.getLinks(), function(sibling) {
+
+                var _srcId = sibling.get('source').id;
+                var _trgId = sibling.get('target').id;
+
+                return (_srcId === srcId && _trgId === trgId) || (_srcId === trgId && _trgId === srcId);
+            });
+
+            switch (siblings.length) {
+
+                case 0:
+                    // The link was removed and had no siblings.
+                    break;
+
+                case 1:
+                    // There is only one link between the source and target. No vertices needed.
+                    cell.unset('vertices');
+                    break;
+
+                default:
+
+                    // There is more than one siblings. We need to create vertices.
+
+                    var srcCenter = graph.getCell(srcId).getBBox().center();
+                    var trgCenter = graph.getCell(trgId).getBBox().center();
+                    var midPoint = g.line(srcCenter, trgCenter).midpoint();
+                    var theta = srcCenter.theta(trgCenter);
+                    var gap = 60;
+                    _.each(siblings, function(sibling, index) {
+                        var offset = gap * Math.ceil(index / 2);
+                        var sign = index % 2 ? 1 : -1;
+                        var angle = g.toRad(theta + sign * 90);
+                        var vertex = g.point.fromPolar(offset, angle, midPoint);
+                        sibling.set('vertices', [{
+                            x: vertex.x,
+                            y: vertex.y
+                        }]);
+                    });
+            }
+        };
+        var t3 = LinkWithSameDestination(busy, busy, 'in?job /{CONTINUE}', [{
+            x: 570,
+            y: 110
+        }, {
+            x: 650,
+            y: 230
+        }]);
+        fig12.embed(t3);
+        graph.addCell([fig12, free, busy, t3]);
+
+        var myAdjustVertices = _.partial(adjustVertices, graph);
+        graph.on('add remove change:source change:target', myAdjustVertices);
+        graph.addCell([t1, t2]);
+    </script>
+</body>
