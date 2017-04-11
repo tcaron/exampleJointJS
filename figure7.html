@@ -4,23 +4,22 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Figure 6</title>
+    <title>Figure 7</title>
     <link rel="stylesheet" href="css/joint.min.css">
     <script src="js/jquery-3.2.0.min.js"></script>
     <script src="js/index.js"></script>
     <script src="js/backbone.js"></script>
     <script src="js/joint.min.js"></script>
+    <script src="js/joint.min.js"></script>
 </head>
 
 <body>
-    <h1>Figure 6</h1>
-    <div id="fig6"></div>
-
+    <h1>Figure 7</h1>
+    <div id="fig7"></div>
     <script>
         var graph = new joint.dia.Graph();
-
         var paper = new joint.dia.Paper({
-            el: $('#fig6'),
+            el: $('#fig7'),
             width: 800,
             height: 800,
             model: graph,
@@ -29,150 +28,14 @@
             linkPinning: false,
         });
 
-        var wait = new joint.shapes.devs.Model({
-            position: {
-                x: 70,
-                y: 70
-            },
-            size: {
-                width: 250,
-                height: 300
-            },
-            attrs: {
-                '.label': {
-                    text: 'WAIT',
-                    'ref-x': .5,
-                    'ref-y': .9
-                },
-            }
-
+        joint.shapes.devs.Model = joint.shapes.devs.Model.extend({
+            defaults: joint.util.deepSupplement({
+                markup: '<g class="rotatable"><g class="scalable"><rect class="body"/></g><text class="label"/><g class="inPorts"/><g class="outPorts"/></g>',
+                portMarkup: '<g class="port"><path class="port-body" d="M -5 -10 5 -10 5 10 -5 10 z"/></g>',
+                type: 'devs.Model'
+            }, joint.shapes.devs.Model.prototype.defaults)
         });
-
-        var uml = joint.shapes.uml;
-        var busyWait = new uml.State({
-            position: {
-                x: 120,
-                y: 120
-            },
-            size: {
-                width: 100,
-                height: 50
-            },
-            name: "BUSY_WAIT",
-            events: ["+infini"],
-        });
-
-        var freeWait = new uml.State({
-            position: {
-                x: 170,
-                y: 240
-            },
-            size: {
-                width: 100,
-                height: 50
-            },
-            name: "FREE_WAIT",
-            events: ["+infini"],
-        });
-
-        var send = new uml.State({
-            position: {
-                x: 420,
-                y: 200
-            },
-            size: {
-                width: 100,
-                height: 50
-            },
-            name: "SEND",
-            events: ["@tsend"],
-        });
-
-        var t1 = new uml.Transition({
-            source: {
-                id: busyWait.id
-            },
-            target: {
-                id: freeWait.id
-            },
-        });
-
-        var t2 = new uml.Transition({
-            source: {
-                id: busyWait.id
-            },
-            target: {
-                id: send.id
-            },
-        });
-
-        var t3 = new uml.Transition({
-            source: {
-                id: freeWait.id
-            },
-            target: {
-                id: send.id
-            },
-        });
-
-        var t4 = new uml.Transition({
-            source: {
-                id: send.id
-            },
-            target: {
-                id: busyWait.id
-            },
-        });
-        t4.attr({
-            '.connection': {
-                stroke: '#4b4a67',
-                'stroke-width': 3,
-                'stroke-dasharray': '5 2'
-            },
-        });
-        wait.embed(busyWait);
-        wait.embed(freeWait);
-        t1.label(0, {
-            position: 0.5,
-            attrs: {
-                text: {
-                    text: 'done? @[n=0]/{p=F}',
-                    'font-size': 14,
-                    'font-family': 'san-serif'
-                }
-            }
-        });
-        t2.label(0, {
-            position: 0.5,
-            attrs: {
-                text: {
-                    text: 'done? @/{p=F}',
-                    'font-size': 14,
-                    'font-family': 'san-serif'
-                }
-            }
-        });
-        t3.label(0, {
-            position: 0.5,
-            attrs: {
-                text: {
-                    text: 'in?/{n++}',
-                    'font-size': 14,
-                    'font-family': 'san-serif'
-                }
-            }
-        });
-
-        t4.label(0, {
-            position: 0.5,
-            attrs: {
-                text: {
-                    text: 'out!/{n--,p=B}',
-                    'font-size': 14,
-                    'font-family': 'san-serif'
-                }
-            }
-        });
+        joint.shapes.devs.NewModelView = joint.shapes.devs.ModelView;
 
         function LinkWithSameDestination(source, target, label, vertices) {
 
@@ -197,24 +60,223 @@
             return cell;
         }
 
-        var t5 = LinkWithSameDestination(busyWait, busyWait, 'in?@/{n++}', [{
-            x: 300,
-            y: 40
+        var contains = new joint.shapes.devs.Model({
+            position: {
+                x: 70,
+                y: 70
+            },
+            size: {
+                width: 450,
+                height: 500
+            }
+        });
+
+        var aBuffer = new joint.shapes.devs.Model({
+            position: {
+                x: 70,
+                y: 70
+            },
+            size: {
+                width: 450,
+                height: 250
+            },
+            inPorts: ['in:Job', 'done'],
+            outPorts: ['out'],
+            attrs: {
+                '.label': {
+                    text: 'ABuffer',
+                    'ref-x': .5,
+                    'ref-y': .0
+                },
+            }
+        });
+
+        var parallels = new joint.shapes.devs.Model({
+            position: {
+                x: 70,
+                y: 70
+            },
+            size: {
+                width: 450,
+                height: 250
+            },
+        });
+
+
+        var editor;
+        var coupled;
+        var atomicModels = {};
+        var path = [];
+        var uml = joint.shapes.uml;
+
+        var wait = new uml.State({
+            position: {
+                x: 120,
+                y: 150
+            },
+            size: {
+                width: 100,
+                height: 100
+            },
+            name: "WAIT",
+            events: ["+@infini"],
+        });
+
+        var send = new uml.State({
+            position: {
+                x: 360,
+                y: 150
+            },
+            size: {
+                width: 100,
+                height: 100
+            },
+            name: "SEND",
+            events: ["+@tSend"],
+        });
+
+        var count = new uml.State({
+            position: {
+                x: 120,
+                y: 420
+            },
+            size: {
+                width: 100,
+                height: 100
+            },
+            name: "COUNT",
+            events: ["+@infini"],
+        });
+
+        var end = new uml.State({
+            position: {
+                x: 360,
+                y: 420
+            },
+            size: {
+                width: 100,
+                height: 100
+            },
+            name: "END",
+        });
+
+        var t1 = new uml.Transition({
+            source: {
+                id: wait.id
+            },
+            target: {
+                id: send.id
+            },
+        });
+        var t2 = new uml.Transition({
+            source: {
+                id: send.id
+            },
+            target: {
+                id: wait.id
+            },
+        });
+        var t7 = new uml.Transition({
+            source: {
+                id: count.id
+            },
+            target: {
+                id: end.id
+            },
+        });
+        t7.label(0, {
+            position: 0.5,
+            attrs: {
+                text: {
+                    text: 'in ? @[c = MAX]',
+                    'font-size': 14,
+                    'font-family': 'san-serif'
+                }
+            }
+        });
+        t2.attr({
+            '.connection': {
+                stroke: '#4b4a67',
+                'stroke-width': 3,
+                'stroke-dasharray': '5 2'
+            },
+        });
+        t1.label(0, {
+            position: 0.5,
+            attrs: {
+                text: {
+                    text: 'done? @[n≠0]/{p=F}',
+                    'font-size': 14,
+                    'font-family': 'san-serif'
+                }
+            }
+        });
+        t2.label(0, {
+            position: 0.5,
+            attrs: {
+                text: {
+                    text: 'out! w/{n--,p=B}',
+                    'font-size': 14,
+                    'font-family': 'san-serif'
+                }
+            }
+        });
+        var t3 = LinkWithSameDestination(send, send, 'in?v/{n++}', [{
+            x: 420,
+            y: 110
         }, {
-            x: 370,
-            y: 70
+            x: 430,
+            y: 130
+        }]);
+        var t4 = LinkWithSameDestination(wait, wait, 'in?v@[p=B]/{n++}', [{
+            x: 180,
+            y: 110
+        }, {
+            x: 200,
+            y: 120
         }]);
 
-        var t6 = LinkWithSameDestination(send, send, 'in?/{n++}', [{
-            x: 400,
+        var t5 = LinkWithSameDestination(wait, wait, 'done?@[n=0]/{p=F}', [{
+            x: 100,
+            y: 270
+        }, {
+            x: 150,
             y: 300
-        }, {
-            x: 470,
-            y: 310
         }]);
 
-        wait.embed(t5);
-        graph.addCell([wait, busyWait, freeWait, send, t5, t6]);
+        var t6 = LinkWithSameDestination(count, count, 'in?@[c<MAX]/{c++}', [{
+            x: 150,
+            y: 370
+        }, {
+            x: 170,
+            y: 380
+        }]);
+
+        var cutModels = new joint.shapes.basic.Rect({
+            position: {
+                x: 70,
+                y: 330
+            },
+            size: {
+                width: 450,
+                height: 0.5
+            }
+        });
+
+        aBuffer.embed(wait);
+        aBuffer.embed(send);
+        aBuffer.embed(count);
+        aBuffer.embed(end);
+        aBuffer.embed(t1);
+        aBuffer.embed(t2);
+        aBuffer.embed(t3);
+        aBuffer.embed(t4);
+        aBuffer.embed(t5);
+        aBuffer.embed(t6);
+        aBuffer.embed(t7);
+        contains.embed(aBuffer);
+        contains.embed(parallels);
+        graph.addCells([contains, parallels, aBuffer, wait, send, t3, t4, t5, count, end, t6]);
 
         function adjustVertices(graph, cell) {
 
@@ -268,7 +330,7 @@
                     var trgCenter = graph.getCell(trgId).getBBox().center();
                     var midPoint = g.line(srcCenter, trgCenter).midpoint();
                     var theta = srcCenter.theta(trgCenter);
-                    var gap = 30;
+                    var gap = 60;
                     _.each(siblings, function(sibling, index) {
                         var offset = gap * Math.ceil(index / 2);
                         var sign = index % 2 ? 1 : -1;
@@ -283,7 +345,6 @@
         };
         var myAdjustVertices = _.partial(adjustVertices, graph);
         graph.on('add remove change:source change:target', myAdjustVertices);
-        // paper.on('cell:pointerup', myAdjustVertices);
-        graph.addCell([t1, t2, t4, t3]);
+        graph.addCells([t1, t2, t7]);
     </script>
 </body>
