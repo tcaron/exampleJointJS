@@ -19,6 +19,7 @@
 <div id="myholder"></div>
 <script type="text/javascript">
 
+	var json = null;
     var graph = new joint.dia.Graph;
 
     var paper = new joint.dia.Paper({
@@ -29,11 +30,21 @@
         gridSize: 1
     });
 
-    
+	function Save(){
+
+	json = JSON.stringify(graph);
+		
+	}
+	
+	function Load(){
+	
+	graph.fromJSON(JSON.parse(json));
+	
+	}
+	   
 	function Clear(){
 	
 	graph.clear();
-	
 	
 	}
 	
@@ -125,6 +136,8 @@
     <input type="button" class="btn btn-lg btn-primary" value="add state" onclick="CreateEtat(),ClearFields()" />
     <input type="button" class="btn btn-lg btn-primary" value="add link " onclick="CreateLink()" />
 	<input type="button" class="btn btn-lg btn-primary" value="Clear graph" onclick="Clear()" />
+	<input type="button" class="btn btn-lg btn-primary" value="Save graph" onclick="Save()" />
+	<input type="button" class="btn btn-lg btn-primary" value="Open graph" onclick="Load()" />
 </FORM>
 
 </body>
