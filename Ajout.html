@@ -83,7 +83,7 @@
 
             S1: new uml.State({
                 position: { x:100  , y: 100 },
-                size: { width: 200, height: 100 },
+                size: { width: 200, height: 200 },
                 name: GetTextfieldName(),
                 events: [GetParametersOne(),GetParametersTwo()],
                 attrs: {
@@ -101,15 +101,14 @@
         };
 
         _.each(states, function(c) { graph.addCell(c); });
+		
     }
-
-
 
     function CreateLink(){
 	
 	var link = new joint.shapes.uml.Transition({
-    source: { x: 10, y: 20 },
-    target: { x: 350, y: 20 },
+    source: { x: 10, y: 450 },
+    target: { x: 350, y: 450 },
     attrs: {}
 	});
 
