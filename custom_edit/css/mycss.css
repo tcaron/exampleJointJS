@@ -3,21 +3,12 @@ input[type=file] {
     height:0;
     width:0;
 }
-
+/*
 #wrapper {
     border: 1px solid #333;
     width:1300px;
     height:155px;
 
-}
-
-#div0 {
-    display: inline-block;
-    border: 1px solid #333;
-    border-right: 2px solid white;
-    width:80px;
-    height:155px;
-    vertical-align: top;
 }
 
 
@@ -63,4 +54,37 @@ input[type=file] {
 #mytext{
     display: inline-block;
     vertical-align: top;
+}*/
+
+
+body {
+    background-color: #333;
+    color: #fff;
+    font: 300 100.1% "Helvetica Neue", Helvetica, "Arial Unicode MS", Arial, sans-serif;
+    }
+	
+	body
+	{
+	font-family: 'Lucida Console', Monaco, monospace;
+	}
+	
+#myholder {
+margin-left:420px;
+margin-top: -800px;
+height: 800px;
+padding-right: 60px;
+padding-left:0px;
+border-right: 2px solid gray;
+border-left: 2px solid gray;
+border-top : 2px solid gray;
+width : 1100px; 
+border-bottom : 2px solid gray;
+width : 1100px; 
+}
+
+
+#div0 {
+	
+margin-left:420px;
+margin-top: +20px
 }

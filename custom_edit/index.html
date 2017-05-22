@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 <html>
+<title>JointJS</title>
+<h1>Graph Editor </h1>
 <head>
-<style>
-body {
-    background-color: #333;
-    color: #fff;
-    font: 300 100.1% "Helvetica Neue", Helvetica, "Arial Unicode MS", Arial, sans-serif;
-    }
-</style>
 <link rel="stylesheet" type="text/css" href="css/joint.css" />
-<link rel="stylesheet" type="text/css" href="css/style.css" />
+<!--<link rel="stylesheet" type="text/css" href="css/style.css" />-->
 <link rel="stylesheet" type="text/css" href="css/mycss.css" />
+<link href="http://fonts.googleapis.com/css?family=Fenix" rel="stylesheet" type="text/css">
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/lodash.min.js"></script>
 <script type="text/javascript" src="js/backbone-min.js"></script>
@@ -30,33 +26,16 @@ var linkcolor=1;
 var cellkind = 1;
 var saved = true;
 </script>
-
 </head>
 <body>
 
 <div id="wrapper">
 
-<div id="div0">
-<button onclick="clearit()"> New graph</button><br>
-<button id ="openfile" > Load</button><br>
-<!--<button onclick="readit()"> Load</button>-->
-<button onclick="svgit()"> Save SVG </button><br>
-<button onclick="alert('not working on this demo, save svg instead');"> Save PNG </button><br>
-<!--<button onclick="saveit()"> Save</button>-->
-
-<button onclick="saveitas()"> Save JSON</button><br>
-<!--<button onclick="clearit()"> Clear</button>-->
-<input type="file" id="theFile"/>
-
-<button onclick="testit()"> Test</button><br>
-
-</div>
-
 <div id="div1">
 Add Cells (click on color cell) 
-<form name="NewCell" action="javascript:onCreateButtonClick();" onsubmit="return validateCell()" method="post">
-Name: <input type="text" name="fname">
-URL: <input type="text" name="flink" value="" >
+<form name="NewCell" action="javascript:onCreateButtonClick(), clear();" onsubmit="return validateCell()" method="post">
+Name: <input  type="text" name="fname" id="name_id">
+URL: <input type="text" name="flink" value="" > <br>
 <input type="checkbox" name="stylecell" value="dashed" id="iscelldashed">dashed
 </form>
 <br>
@@ -65,37 +44,39 @@ URL: <input type="text" name="flink" value="" >
   <rect x="0" y ="0" id="cell1" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #7cbf00" onclick="if (validateCell()) {cellkind = 1; document.NewCell.submit();}" cursor="pointer"></rect>
   <text x="25" y="20"  fill="#fff" onclick="if (validateCell()) { cellkind = 1; document.NewCell.submit();}" cursor="pointer"> Create </text>
 </g>
-</svg>
+</svg>&nbsp;&nbsp;
 
 <svg width="100" height="40" xmlns="http://www.w3.org/2000/svg">
 <g>
   <rect x="0" y ="0" id="cell2" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #bf0000" onclick="if (validateCell()) {cellkind = 2; document.NewCell.submit();}" cursor="pointer"></rect>
   <text x="25" y="20"  fill="#fff" onclick="if (validateCell()) {cellkind = 2; document.NewCell.submit();}" cursor="pointer"> Create </text>
 </g>
-</svg>
+</svg>&nbsp;&nbsp;
 
 <svg width="100" height="40" xmlns="http://www.w3.org/2000/svg">
 <g>
   <rect x="0" y ="0" id="cell3" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #6495ED" onclick="if (validateCell()) {cellkind = 3; document.NewCell.submit();}" cursor="pointer"></rect>
   <text x="25" y="20"  fill="#fff" onclick="if (validateCell()) {cellkind = 3; document.NewCell.submit();}" cursor="pointer"> Create </text>
 </g>
-</svg>
+</svg>&nbsp;&nbsp;
 <br>
-Create variable group cell &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <br>
+Create variable group cell :&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <br><br>
+
+Label: <input id= "GroupName" type="text" name="grname" >&nbsp;&nbsp;<input type="checkbox" name="style" value="dashed" id="Isdashed">dashed<br><br>
 <svg width="100" height="30" xmlns="http://www.w3.org/2000/svg">
 <g>
   <rect x="0" y ="0" id="group1" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: yellow" onclick="onCreateGroup(1);" cursor="pointer"></rect>
-  <text x="25" y="20"  fill="#fff" onclick="onCreateGroup(1);" cursor="pointer"> Group </text>
+  <text x="25" y="20"  fill="#fff" onclick="onCreateGroup(1), clearLabel();" cursor="pointer"> Group </text>
 </g>
-</svg>
+</svg>&nbsp;&nbsp;
 
 <svg width="100" height="30" xmlns="http://www.w3.org/2000/svg">
 <g>
   <rect x="0" y ="0" id="group2" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #C974FF" onclick="onCreateGroup(2);" cursor="pointer"></rect>
-  <text x="25" y="20"  fill="#fff" onclick="onCreateGroup(2);" cursor="pointer"> Group </text>
+  <text x="25" y="20"  fill="#fff" onclick="onCreateGroup(2), clearLabel();" cursor="pointer"> Group </text>
 </g>
 </svg>
-Label: <input id= "GroupName" type="text" name="grname">
+
 <!--
 <svg width="100" height="30" xmlns="http://www.w3.org/2000/svg">
 <g>
@@ -103,14 +84,14 @@ Label: <input id= "GroupName" type="text" name="grname">
   <text x="25" y="20"  fill="#fff" onclick="onCreateText();">  </text>
 </g>
 </svg>
--->
 
+-->
 </div>
 <div id = "div2">
-
+<br>
 Add Links (click on arrows)
 <form name="NewLink" action="javascript:onCreateLinkClick(linkcolor);" method="post">
-Name: <input type="text" name="Lname">
+Name: <input type="text" name="Lname" id="name_id"><br>
 <input type="checkbox" name="style" value="dashed" id="isdashed">dashed
 </form>
 
@@ -149,6 +130,7 @@ Name: <input type="text" name="Lname">
   </g>
 </svg>
 
+<br>
  
 <svg width="110" height="40" xmlns="http://www.w3.org/2000/svg">
 <defs>
@@ -183,22 +165,83 @@ Name: <input type="text" name="Lname">
   </g>
 </svg>
 
+<div id="wrapper0"><div id="mytext">INFO: </div>
+<div id="myholder0" style="border:2px solid white; width:300px;  "> </div>
+
+</div>
+<br>
 </div>
 <div id="div3">
-<div id="myholder-small"></div>
+<div id="myholder-small" style="border:2px solid white; width:300px"> </div>
 </div>
 </div>
-<hr>
 
-<div id="wrapper0">
-<div id="myholder0" style="border:1px solid white; width:300px"> </div>
-<div id="mytext">INFO: </div>
-</div>
-<hr>
 <div id="myholder"></div>
-<div id="myholderT" style="visibility:hidden" ></div>
+<!--<div id="myholderT" style="visibility:hidden" ></div>-->
+<div id="div0">
+
+<button type="button" class="btn btn-primary" onclick="clearit()"> New graph</button>
+<button type="button" class="btn btn-primary" onclick="Load()"> Load</button>
+<button type="button" class="btn btn-primary" onclick="Save()"> Save</button>
+<button onclick="svgit()"> Save SVG </button><br>
+
+
+<input  type="file" id="theFile"/>
+</div>
+<script>
+
+var json = null;
+
+function Save() {
+
+json = JSON.stringify(graph);
+console.log(json);
+
+
+}
+
+function Load() {
+graph.fromJSON(JSON.parse(json));
+
+}
+</script>
+
 
 <script>
+
+function svgit(){
+//V(paper.svg).remove(hrr);
+
+temp=graph.toJSON();
+graphT.fromJSON(temp);
+var els = graphT.getElements();
+console.log(els.length, 'elements');
+//for (i = 0; i < els.length; i++) {
+//   els[i].attr('text/fill', "red"); 
+//};
+var bbox = paperT.getContentBBox();
+paperT.setDimensions(bbox.width+bbox.x*2+30, bbox.height+bbox.y*2+30);
+var svgDoc = paperT.svg;
+var serializer = new XMLSerializer();
+var svgString = serializer.serializeToString(svgDoc);
+var nbreak = svgString.search('><');
+var headline = svgString.slice(0,nbreak);
+headline = headline.concat(' style="background: #333">')
+var rest = svgString.slice(nbreak+1);
+//console.log(headline.concat(mystyles, rest), svgString.length, rest);
+//socket.emit('modifysvg',{svg:svgString});
+//};
+saveAs(new Blob([headline.concat(mystyles, rest)], {type:"application/svg+xml"}), "buffer.svg");
+};
+
+function clear(){
+document.getElementById("name_id").value = "";
+}
+
+function clearLabel(){
+document.getElementById("GroupName").value = "";
+}
+
 var graph = new joint.dia.Graph;
 var graph0 = new joint.dia.Graph;
 var graphT = new joint.dia.Graph;
@@ -206,9 +249,9 @@ var graphT = new joint.dia.Graph;
 var paper = new joint.dia.Paper({
     el: $('#myholder'),
     interactive : true,
-    width: 1800,
-    //width: $(document).width(),
-    height: 2000,
+		width: 1162,
+        height: 800,
+    //width: $(document).width(), 
     model: graph,
     gridSize: 1
 });
@@ -281,10 +324,7 @@ $('#iscelldashed').on('change', function() {
         cell2.style['stroke-dasharray']= "5 5";
         var cell3 = document.getElementById("cell3");
         cell3.style['stroke-dasharray']= "5 5";
-        var group1 = document.getElementById("group1");
-        group1.style['stroke-dasharray']= "5 5";
-        var group2 = document.getElementById("group2");
-        group2.style['stroke-dasharray']= "5 5";
+      
     }
     else{
         var cell1 = document.getElementById("cell1");
@@ -293,15 +333,27 @@ $('#iscelldashed').on('change', function() {
         cell2.style['stroke-dasharray']= "0";
         var cell3 = document.getElementById("cell3");
         cell3.style['stroke-dasharray']= "0";
-        var group1 = document.getElementById("group1");
+        
+
+    }
+});
+
+$('#Isdashed').on('change', function() { 
+    // From the other examples
+    if (this.checked) {
+         var group1 = document.getElementById("group1");
+        group1.style['stroke-dasharray']= "5 5";
+        var group2 = document.getElementById("group2");
+        group2.style['stroke-dasharray']= "5 5";
+    }
+    else{
+       var group1 = document.getElementById("group1");
         group1.style['stroke-dasharray']= "0";
         var group2 = document.getElementById("group2");
         group2.style['stroke-dasharray']= "0";
 
     }
 });
-
-
 
 $('#isdashed').on('change', function() { 
     // From the other examples
@@ -559,8 +611,6 @@ paper0.on('cell:pointerup',function (element, evt, x, y) {
         });
 
     });
-
-
 </script>
 </body>
 </html>
