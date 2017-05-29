@@ -9,31 +9,88 @@
     <meta charset="utf-8">
     <title>Example jointJS</title>
     <link rel="stylesheet" href="css/joint.min.css">
+    <link rel="stylesheet" href="css/menu.css">
     <script src="js/jquery-3.2.0.min.js"></script>
     <script src="js/index.js"></script>
     <script src="js/backbone.js"></script>
     <script src="js/joint.min.js"></script> </head>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css">
+    <link rel="stylesheet" href="css/jquery.simplecolorpicker.css">
+    <link rel="stylesheet" href="css/jquery.simplecolorpicker-regularfont.css">
+    <link rel="stylesheet" href="css/jquery.simplecolorpicker-glyphicons.css">
+    <link rel="stylesheet" href="css/jquery.simplecolorpicker-fontawesome.css">
 
 </head>
 <body>
+
+<ul id="menu-accordeon">
+    <li><a href="#">Figures</a>
+        <ul>
+            <li><a href="#" onclick="LoadGraph4()">Figure 4</a></li>
+            <li><a href="#" onclick="LoadGraph6()">Figure 6</a></li>
+            <li><a href="#" >Figure 7</a></li>
+            <li><a href="#">Figure 8</a></li>
+            <li><a href="#">Figure 12</a></li>
+            <li><a href="#">Figure 13</a></li>
+            <li><a href="#">Figure 14</a></li>
+        </ul>
+    </li>
+    <li><a href="#">Lien menu 2</a>
+        <ul>
+            <li><a href="#">Lien sous menu 2</a></li>
+            <li><a href="#">Lien sous menu 2</a></li>
+            <li><a href="#">Lien sous menu 2</a></li>
+            <li><a href="#">Lien sous menu 2</a></li>
+        </ul>
+    </li>
+    <li><a href="#">Lien menu 3</a>
+        <ul>
+            <li><a href="#">Lien sous menu 3</a></li>
+            <li><a href="#">Lien sous menu 3</a></li>
+            <li><a href="#">Lien sous menu 3</a></li>
+            <li><a href="#">Lien sous menu 3</a></li>
+        </ul>
+    </li>
+</ul>
 <div id="myholder"></div>
 <script type="text/javascript">
 
+	var figure6 = {"cells":[{"type":"devs.Model","inPorts":[],"outPorts":[],"size":{"width":250,"height":300},"ports":{"groups":{"in":{"position":{"name":"left"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#fff","stroke":"#000","r":10,"magnet":true}},"label":{"position":{"name":"left","args":{"y":10}}}},"out":{"position":{"name":"right"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#fff","stroke":"#000","r":10,"magnet":true}},"label":{"position":{"name":"right","args":{"y":10}}}}},"items":[]},"position":{"x":70,"y":70},"angle":0,"id":"0d56e717-b0ec-43a8-b729-65ae624e8284","embeds":["ab5426bb-0cab-4f42-87a5-91954793a29f","6adf84d7-bb81-4cf3-b282-5ccffc5c8b5b","aa4cb702-9108-41e6-bc30-337d5523a5b2"],"z":1,"attrs":{".label":{"text":"WAIT","ref-y":0.9}}},{"type":"uml.State","name":"BUSY_WAIT","events":["+infini"],"position":{"x":120,"y":120},"size":{"width":100,"height":50},"angle":0,"id":"6adf84d7-bb81-4cf3-b282-5ccffc5c8b5b","parent":"0d56e717-b0ec-43a8-b729-65ae624e8284","z":2,"attrs":{".uml-state-separator":{"d":"M 0 20 L 100 20"},".uml-state-name":{"text":"BUSY_WAIT"},".uml-state-events":{"text":"+infini"}}},{"type":"uml.State","name":"FREE_WAIT","events":["+infini"],"position":{"x":170,"y":240},"size":{"width":100,"height":50},"angle":0,"id":"aa4cb702-9108-41e6-bc30-337d5523a5b2","parent":"0d56e717-b0ec-43a8-b729-65ae624e8284","z":3,"attrs":{".uml-state-separator":{"d":"M 0 20 L 100 20"},".uml-state-name":{"text":"FREE_WAIT"},".uml-state-events":{"text":"+infini"}}},{"type":"uml.State","name":"SEND","events":["@tsend"],"position":{"x":420,"y":200},"size":{"width":100,"height":50},"angle":0,"id":"7c088c9c-a8e1-4141-bec3-da10f6173917","z":4,"attrs":{".uml-state-separator":{"d":"M 0 20 L 100 20"},".uml-state-name":{"text":"SEND"},".uml-state-events":{"text":"@tsend"}}},{"type":"fsa.Arrow","smooth":true,"source":{"id":"6adf84d7-bb81-4cf3-b282-5ccffc5c8b5b"},"target":{"id":"6adf84d7-bb81-4cf3-b282-5ccffc5c8b5b"},"labels":[{"position":0.5,"attrs":{"text":{"text":"in?@/{n++}","font-weight":"bold"}}}],"vertices":[{"x":300,"y":40},{"x":370,"y":70}],"id":"ab5426bb-0cab-4f42-87a5-91954793a29f","parent":"0d56e717-b0ec-43a8-b729-65ae624e8284","z":5,"attrs":{}},{"type":"fsa.Arrow","smooth":true,"source":{"id":"7c088c9c-a8e1-4141-bec3-da10f6173917"},"target":{"id":"7c088c9c-a8e1-4141-bec3-da10f6173917"},"labels":[{"position":0.5,"attrs":{"text":{"text":"in?/{n++}","font-weight":"bold"}}}],"vertices":[{"x":400,"y":300},{"x":470,"y":310}],"id":"e1604385-4acd-41a8-baac-4d615d1cde87","z":6,"attrs":{}},{"type":"uml.Transition","source":{"id":"6adf84d7-bb81-4cf3-b282-5ccffc5c8b5b"},"target":{"id":"aa4cb702-9108-41e6-bc30-337d5523a5b2"},"id":"bd7de9f9-fc04-4cb2-a47c-fab6ebd6ade1","labels":[{"position":0.5,"attrs":{"text":{"text":"done? @[n=0]/{p=F}","font-size":14,"font-family":"san-serif"}}}],"z":7,"attrs":{}},{"type":"uml.Transition","source":{"id":"6adf84d7-bb81-4cf3-b282-5ccffc5c8b5b"},"target":{"id":"7c088c9c-a8e1-4141-bec3-da10f6173917"},"id":"9e817482-4029-495c-8d2b-5ed163958cb0","labels":[{"position":0.5,"attrs":{"text":{"text":"done? @/{p=F}","font-size":14,"font-family":"san-serif"}}}],"z":8,"vertices":[{"x":320,"y":185}],"attrs":{}},{"type":"uml.Transition","source":{"id":"7c088c9c-a8e1-4141-bec3-da10f6173917"},"target":{"id":"6adf84d7-bb81-4cf3-b282-5ccffc5c8b5b"},"id":"81978811-39dd-4358-b7e0-6da91b3acf77","labels":[{"position":0.5,"attrs":{"text":{"text":"out!/{n--,p=B}","font-size":14,"font-family":"san-serif"}}}],"z":9,"vertices":[{"x":312.27012048319006,"y":213.9870481880374}],"attrs":{".connection":{"stroke":"#4b4a67","stroke-width":3,"stroke-dasharray":"5 2"}}},{"type":"uml.Transition","source":{"id":"aa4cb702-9108-41e6-bc30-337d5523a5b2"},"target":{"id":"7c088c9c-a8e1-4141-bec3-da10f6173917"},"id":"79b6c3f1-9e78-44a2-ac30-1a621306ca90","labels":[{"position":0.5,"attrs":{"text":{"text":"in?/{n++}","font-size":14,"font-family":"san-serif"}}}],"z":10,"attrs":{}}]};
+	var figure4 = {"cells":[{"markup":"<g class=\"rotatable\"><g class=\"scalable\"><rect class=\"body\"/></g><text class=\"label\"/><g class=\"inPorts\"/><g class=\"outPorts\"/></g>","portMarkup":"<g class=\"port\"><path class=\"port-body\" d=\"M -5 -10 5 -10 5 10 -5 10 z\"/></g>","type":"devs.Model","inPorts":["in:Job","done"],"outPorts":["out"],"size":{"width":600,"height":600},"ports":{"groups":{"in":{"position":{"name":"left"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#fff","stroke":"#000","r":10,"magnet":true}},"label":{"position":{"name":"left","args":{"y":10}}}},"out":{"position":{"name":"right"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#fff","stroke":"#000","r":10,"magnet":true}},"label":{"position":{"name":"right","args":{"y":10}}}}},"items":[{"id":"in:Job","group":"in","attrs":{".port-label":{"text":"in:Job"}}},{"id":"done","group":"in","attrs":{".port-label":{"text":"done"}}},{"id":"out","group":"out","attrs":{".port-label":{"text":"out"}}}]},"position":{"x":70,"y":70},"angle":0,"id":"b4e86413-9386-496a-9961-02678aaac65e","embeds":["1563a16c-9056-46e6-8e47-a3fd5829bc54","b1478d29-9b09-4c18-9d91-ed8ee37fe5c4","c7a02664-6dfd-41b3-a161-bb3fb6e2e9a1","0c6c6a06-8f23-4897-92e8-08bc1e0963bb","79efa099-3e75-48d9-a0ef-f58202af9ff4"],"z":1,"attrs":{".label":{"text":"ADBuffer","ref-y":0.1},"rect":{"fill":"#D5CECC"}}},{"type":"uml.State","name":"WAIT","events":["+@infini"],"position":{"x":200,"y":250},"size":{"width":100,"height":100},"angle":0,"id":"0c6c6a06-8f23-4897-92e8-08bc1e0963bb","parent":"b4e86413-9386-496a-9961-02678aaac65e","z":2,"attrs":{".uml-state-separator":{"d":"M 0 20 L 100 20"},".uml-state-name":{"text":"WAIT"},".uml-state-events":{"text":"+@infini"}}},{"type":"uml.State","name":"Send","events":["+@tSend"],"position":{"x":450,"y":250},"size":{"width":100,"height":100},"angle":0,"id":"79efa099-3e75-48d9-a0ef-f58202af9ff4","parent":"b4e86413-9386-496a-9961-02678aaac65e","z":3,"attrs":{".uml-state-separator":{"d":"M 0 20 L 100 20"},".uml-state-name":{"text":"Send"},".uml-state-events":{"text":"+@tSend"}}},{"type":"fsa.Arrow","smooth":true,"source":{"id":"79efa099-3e75-48d9-a0ef-f58202af9ff4"},"target":{"id":"79efa099-3e75-48d9-a0ef-f58202af9ff4"},"labels":[{"position":0.5,"attrs":{"text":{"text":"in?v/{n++}","font-weight":"bold"}}}],"vertices":[{"x":480,"y":210},{"x":510,"y":215}],"id":"c7a02664-6dfd-41b3-a161-bb3fb6e2e9a1","parent":"b4e86413-9386-496a-9961-02678aaac65e","z":4,"attrs":{}},{"type":"fsa.Arrow","smooth":true,"source":{"id":"0c6c6a06-8f23-4897-92e8-08bc1e0963bb"},"target":{"id":"0c6c6a06-8f23-4897-92e8-08bc1e0963bb"},"labels":[{"position":0.5,"attrs":{"text":{"text":"in?v@[p=B]/{n++}","font-weight":"bold"}}}],"vertices":[{"x":220,"y":250},{"x":220,"y":210}],"id":"b1478d29-9b09-4c18-9d91-ed8ee37fe5c4","parent":"b4e86413-9386-496a-9961-02678aaac65e","z":5,"attrs":{}},{"type":"fsa.Arrow","smooth":true,"source":{"id":"0c6c6a06-8f23-4897-92e8-08bc1e0963bb"},"target":{"id":"0c6c6a06-8f23-4897-92e8-08bc1e0963bb"},"labels":[{"position":0.5,"attrs":{"text":{"text":"done?@[n=0]/{p=F}","font-weight":"bold"}}}],"vertices":[{"x":100,"y":400},{"x":200,"y":405}],"id":"1563a16c-9056-46e6-8e47-a3fd5829bc54","parent":"b4e86413-9386-496a-9961-02678aaac65e","z":6,"attrs":{}},{"type":"uml.Transition","source":{"id":"0c6c6a06-8f23-4897-92e8-08bc1e0963bb"},"target":{"id":"79efa099-3e75-48d9-a0ef-f58202af9ff4"},"id":"1d48f656-e75d-4f16-8aaa-796f81c651ca","labels":[{"position":0.5,"attrs":{"text":{"text":"in?v@[p=F]/{n++}","font-size":14,"font-family":"san-serif"}}}],"z":7,"vertices":[{"x":375,"y":300}],"attrs":{}},{"type":"uml.Transition","source":{"id":"0c6c6a06-8f23-4897-92e8-08bc1e0963bb"},"target":{"id":"79efa099-3e75-48d9-a0ef-f58202af9ff4"},"id":"6bc67955-ca9f-4a5b-8430-951fb5f4664a","labels":[{"position":0.5,"attrs":{"text":{"text":"done?@[n≠0]/{p=F}","font-size":14,"font-family":"san-serif"}}}],"z":8,"vertices":[{"x":375,"y":360}],"attrs":{}},{"type":"uml.Transition","source":{"id":"79efa099-3e75-48d9-a0ef-f58202af9ff4"},"target":{"id":"0c6c6a06-8f23-4897-92e8-08bc1e0963bb"},"id":"13e32099-9016-4ab9-91eb-dce00feb40f4","labels":[{"position":0.5,"attrs":{"text":{"text":"out!w/{n--,p=B}","font-size":14,"font-family":"san-serif"}}}],"z":9,"vertices":[{"x":375,"y":240}],"attrs":{".connection":{"stroke":"#4b4a67","stroke-width":3,"stroke-dasharray":"5 2"}}}]};
+	
 	var json = null;
     var graph = new joint.dia.Graph;
 
     var paper = new joint.dia.Paper({
         el: $('#myholder'),
-        width: 1500,
+        width: 1200,
         height: 500,
         model: graph,
         gridSize: 1
     });
+	
+	function LoadGraph4(){
+	graph.fromJSON(figure4);
+	
+	}
+	
+	function LoadGraph6(){
+	graph.fromJSON(figure6);
+	
+	}
+	
+	function LoadGraph7(){
+	graph.fromJSON(figure7);
+	
+	}
 
 	function Save(){
 
-	json = JSON.stringify(graph);
-		
+	   
+            json = JSON.stringify(graph);
+            alert("Save");
+        
 	}
 	
 	function Load(){
@@ -43,8 +100,11 @@
 	}
 	   
 	function Clear(){
-	
-	graph.clear();
+
+	   if(confirm("Are you sure")){
+            graph.clear();
+        }
+
 	
 	}
 	
@@ -78,30 +138,43 @@
     }
 
     function CreateEtat(){
-        var uml = joint.shapes.uml;
-        var states = {
+        var color= document.getElementById('color').value;
+        var name = document.getElementById('name_id').value;
+        if (name == ""){
 
-            S1: new uml.State({
-                position: { x:100  , y: 100 },
-                size: { width: 200, height: 200 },
-                name: GetTextfieldName(),
-                events: [GetParametersOne(),GetParametersTwo()],
-                attrs: {
-                    '.uml-state-body': {
-                        fill: 'rgba(48, 208, 198, 0.1)',
-                        stroke: 'rgba(48, 208, 198, 0.5)',
-                        'stroke-width': 1.5
-                    },
-                    '.uml-state-separator': {
-                        stroke: 'rgba(48, 208, 198, 0.4)'
+            alert("please,enter name");
+
+        }else {
+            var uml = joint.shapes.uml;
+            var states = {
+
+                S1: new uml.State({
+                    position: {x: 100, y: 100},
+                    size: {width: 200, height: 200},
+                    name: GetTextfieldName(),
+                    events: [GetParametersOne(), GetParametersTwo()],
+                    attrs: {
+                        '.uml-state-body': {
+                            fill: color,
+                            stroke: 'rgba(48, 208, 198, 0.5)',
+                            'stroke-width': 1.5
+                        },
+                        '.uml-state-separator': {
+                            stroke: 'rgba(48, 208, 198, 0.4)'
+                        }
+
                     }
-                }
-            }),
 
-        };
+                }),
 
-        _.each(states, function(c) { graph.addCell(c); });
-		
+            };
+
+            _.each(states, function (c) {
+                graph.addCell(c);
+            });
+
+
+        }
     }
 
     function CreateLink(){
@@ -125,19 +198,71 @@
 
 
 </script>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.js"></script>
+<script src="js/jquery.simplecolorpicker.js"></script>
+
+<script id="init">
+    $(document).ready(function() {
+
+        $('#init').on('click', function() {
+
+            $('select[name="colorpicker-picker-longlist"]').simplecolorpicker({picker: true, theme: 'glyphicons'});
+
+        });
+
+        $('#destroy').on('click', function() {
+            $('select').simplecolorpicker('destroy');
+        });
+
+        // By default, activate simplecolorpicker plugin on HTML selects
+        $('#init').trigger('click');
+    });
+</script>
 <FORM>
-    Name : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="name" id="name_id"  /><br>
+
+    Name : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input  type="text" name="name" id="name_id"  /><br>
 	<br>
     First parameter :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="text"  name="parameter1" id="parameter_1"  /><br>
 	<br>
     Second parameter : <input type="text" name="parameter2" id="parameter_2"  /><br>
+    <br>
+    Choose color :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <select name="colorpicker-picker-longlist" id="color">
+        <option value="#ac725e">#ac725e</option>
+        <option value="#d06b64">#d06b64</option>
+        <option value="#f83a22">#f83a22</option>
+        <option value="#fa573c">#fa573c</option>
+        <option value="#ff7537">#ff7537</option>
+        <option value="#ffad46">#ffad46</option>
+        <option value="#42d692">#42d692</option>
+        <option value="#16a765">#16a765</option>
+        <option value="#7bd148">#7bd148</option>
+        <option value="#b3dc6c">#b3dc6c</option>
+        <option value="#fbe983">#fbe983</option>
+        <option value="#fad165">#fad165</option>
+        <option value="#92e1c0">#92e1c0</option>
+        <option value="#9fe1e7">#9fe1e7</option>
+        <option value="#9fc6e7">#9fc6e7</option>
+        <option value="#4986e7">#4986e7</option>
+        <option value="#9a9cff">#9a9cff</option>
+        <option value="#b99aff">#b99aff</option>
+        <option value="#c2c2c2">#c2c2c2</option>
+        <option value="#cabdbf">#cabdbf</option>
+        <option value="#cca6ac">#cca6ac</option>
+        <option value="#f691b2">#f691b2</option>
+        <option value="#cd74e6">#cd74e6</option>
+        <option value="#a47ae2">#a47ae2</option>
+    </select>
+    <br>
 	<br>
-    <input type="button" class="btn btn-lg btn-primary" value="add state" onclick="CreateEtat(),ClearFields()" />
-    <input type="button" class="btn btn-lg btn-primary" value="add link " onclick="CreateLink()" />
-	<input type="button" class="btn btn-lg btn-primary" value="Clear graph" onclick="Clear()" />
-	<input type="button" class="btn btn-lg btn-primary" value="Save graph" onclick="Save()" />
-	<input type="button" class="btn btn-lg btn-primary" value="Open graph" onclick="Load()" />
-</FORM>
 
+</FORM>
+<input type="button" class="btn btn-lg btn-primary" value="add state" onclick="CreateEtat(),ClearFields()" />
+<input type="button" class="btn btn-lg btn-primary" value="add link " onclick="CreateLink()" />
+<input type="button" class="btn btn-lg btn-primary" value="Clear graph" onclick="Clear()" />
+<input type="button" class="btn btn-lg btn-primary" value="Save graph" onclick="Save()" />
+<input type="button" class="btn btn-lg btn-primary" value="Open graph" onclick="Load()" />
 </body>
 </html>
