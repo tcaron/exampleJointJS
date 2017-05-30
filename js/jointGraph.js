@@ -111,12 +111,30 @@ var jointGraph = (function() {
          }
         }
 
+        var atomicState = {};
+        this.getElementByName = function(name){
+            for ( var model in this.modelOptions ){
+                if (atomicModels[this.modelOptions[model]].attributes.attrs['.label'].text == name) {
+                    return atomicModels[this.modelOptions[model]];
+                    console.log("model");
+                }
+            }
+
+            for(var state in this.stateOptions){
+                console.log(atomicState[this.stateOptions[state]].attributes.name);
+                if (atomicState[this.stateOptions[state]].name == name) {
+                    return atomicState[this.stateOptions[state]];
+
+                }
+            }
+
+
+        };
         var atomicLink={} ;
         this.initConnection = function(graph, link, source, target){
-            var parent = parent || undefined;
-          
-            target =  atomicLink[this.linkOptions[link].target];
-           // if ( source.id !== target.id) {
+            var scr = this.getElementByName(source);
+            var trg = this.getElementByName(target);
+            if ( scr.id !== trg.id) {
                 atomicLink[this.linkOptions[link]] = new joint.shapes.uml.Transition({
                     source: {id: source}, target: {id: target},
                });
@@ -130,7 +148,7 @@ var jointGraph = (function() {
                         }
                     }
                 });
-            /*    if (this.linkOptions[link].dashstroke){
+                if (this.linkOptions[link].dashstroke){
                     atomicLink[this.linkOptions[link]].attr({
                         '.connection': {
                             stroke: '#4b4a67',
@@ -148,12 +166,10 @@ var jointGraph = (function() {
                     x: 200,
                     y: 250
                 }]);
-            }*/
+            }
             graph.addCell( atomicLink[this.linkOptions[link]]);
             atomicLink[this.linkOptions[link]].addTo(graph).reparent();
         }
-
-        var atomicState = {};
 
         this.initState = function(graph,state,parent) {
             var parent = parent || undefined ;
@@ -183,25 +199,6 @@ var jointGraph = (function() {
             }
         };
 
-        this.getElementByName = function(name,type){
-         
-         if (type =="state"){
-              for ( var model in this.modelOptions ){
-                    if (atomicModels[this.modelOptions[model]].attributes.attrs['.label'].text == name) {
-                        return atomicModels[this.modelOptions[model]];
-                }
-            }
-         }
-        if (type == "model"){
-            for(var state in this.stateOptions){
-               // console.log(atomicState[this.stateOptions[state]].attributes.name);
-                if (atomicState[this.stateOptions[state]].name == name) {
-                     return atomicState[this.stateOptions[state]];
-                }
-            }
-            }
-
-        }
      	this.init = function(){
      		var self = this;
      		var graph = new joint.dia.Graph;
@@ -258,9 +255,11 @@ var jointGraph = (function() {
                 }
                 else{ this.initState(graph,state); }
             }
-
+        var getElem = graph.getElements();
+            console.log(getElem);
+            for (var el in getElem){console.log(el);}
             for (var link in this.linkOptions){
-               this.initConnection(graph,link,this.getElementByName(this.linkOptions[link].source,"state"),this.getElementByName(this.linkOptions[link].target,"state")); 
+               this.initConnection(graph,link,this.linkOptions[link].source,this.linkOptions[link].target);
             }
         var myAdjustVertices = _.partial(this.adjustVertices, graph);
         this.alreadyInit = true;
