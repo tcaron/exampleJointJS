@@ -5,11 +5,12 @@
     <meta charset="utf-8">
     <title>Figure 14</title>
     <link rel="stylesheet" href="../css/joint.min.css">
+    <link rel="stylesheet" href="../css/tooledViewPlugin.css">
     <script src="../js/jquery-3.2.0.min.js"></script>
     <script src="../js/index.js"></script>
     <script src="../js/backbone.js"></script>
     <script src="../js/joint.min.js"></script>
-    <script src="../js/joint.min.js"></script>
+    <script src="../js/tooledViewPlugin.js"></script>
 </head>
 
 <body>
@@ -18,16 +19,52 @@
     <script src="../js/jointGraph.js"></script>
     <script>
     $(document).ready(function(){
-    jointGraph('gen', {modelOptions:[
-   { 'name':'test',
-      'xposition': 80,
-      'yposition': 80 , 
-      'subModel': [{'name':'inf2'},{'name':'inf3'}]
-   },
-   { 'name':'test2',
-      'parent':'test'}
-   ]
-    }); 
+
+ jointGraph('gen', {
+modelOptions: [
+{
+'name': 'firstmod',
+'x': 20,
+'y': 50,
+'height': 200,
+'width': 200,
+'in': 'test',
+'out': 'out test',
+},
+{
+'name': 'test',
+'parent': 'firstmod',
+'x': 20,
+'y': 50,
+'height': 100,
+'width': 100,
+'in': 'ff',
+'out': 'cc',
+}]
+,
+stateOptions: [
+{
+'name': 'firststate',
+'parent': 'test',
+'event': ["test","oui"],
+'x': 20,
+'y': 50,
+'height': 100,
+'width': 100,
+},
+{
+'name': 'test',
+'event': ["test","oui"],
+'x': 30,
+'y': 50,
+'height': 100,
+'width': 100,
+}
+], linkOptions: [
+{},
+{}
+]
+});
      });
     </script>
 </body>
