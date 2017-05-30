@@ -112,12 +112,14 @@ var jointGraph = (function() {
         }
 
         var atomicLink={} ;
-        this.initConnection = function(graph, link, source, target, parent){
+        this.initConnection = function(graph, link, source, target){
             var parent = parent || undefined;
-            if ( source.id != target.id) {
+          
+            target =  atomicLink[this.linkOptions[link].target];
+           // if ( source.id !== target.id) {
                 atomicLink[this.linkOptions[link]] = new joint.shapes.uml.Transition({
-                    source: {id: source.id}, target: {id: target.id},
-                });
+                    source: {id: source}, target: {id: target},
+               });
                 atomicLink[this.linkOptions[link]].label(0, {
                     position: 0.5,
                     attrs: {
@@ -128,7 +130,7 @@ var jointGraph = (function() {
                         }
                     }
                 });
-                if (this.linkOptions[link].dashstroke){
+            /*    if (this.linkOptions[link].dashstroke){
                     atomicLink[this.linkOptions[link]].attr({
                         '.connection': {
                             stroke: '#4b4a67',
@@ -139,18 +141,16 @@ var jointGraph = (function() {
                 }
             }
             else {
-                atomicLink[this.linkOptions[link]] = this.LinkWithSameDestination(source,source,this.linkOptions[link].label, [{
+                atomicLink[this.linkOptions[link]] = this.LinkWithSameDestination(source,target ,this.linkOptions[link].label, [{
                     x: 350,
                     y: 120
                 }, {
                     x: 200,
                     y: 250
                 }]);
-            }
-                graph.addCell( atomicLink[this.linkOptions[link]]);
-                if(parent  != undefined) {
-                    parent.embed(atomicLink[this.linkOptions[link]]);
-                }
+            }*/
+            graph.addCell( atomicLink[this.linkOptions[link]]);
+            atomicLink[this.linkOptions[link]].addTo(graph).reparent();
         }
 
         var atomicState = {};
@@ -170,14 +170,12 @@ var jointGraph = (function() {
                 events: this.stateOptions[state].events,
             });
             graph.addCell(atomicState[this.stateOptions[state]]);
-            console.log( atomicState[this.stateOptions[state]]);
             if(parent  != undefined) {
                 parent.embed(atomicState[this.stateOptions[state]]);
             }
         }
 
         this.getModelByName = function(name){
-            var _model;
             for ( var model in this.modelOptions ){
                     if (atomicModels[this.modelOptions[model]].attributes.attrs['.label'].text == name) {
                         return atomicModels[this.modelOptions[model]];
@@ -185,20 +183,24 @@ var jointGraph = (function() {
             }
         };
 
-        this.getElementByName = function(name){
-         var _element = undefined;
-            for(var model in this.modelOptions){
-                if (atomicModels[this.modelOptions[model]].attributes.attrs['.label'].text == name) {
-                    _element = atomicModels[this.modelOptions[model]];
+        this.getElementByName = function(name,type){
+         
+         if (type =="state"){
+              for ( var model in this.modelOptions ){
+                    if (atomicModels[this.modelOptions[model]].attributes.attrs['.label'].text == name) {
+                        return atomicModels[this.modelOptions[model]];
                 }
             }
+         }
+        if (type == "model"){
             for(var state in this.stateOptions){
-                if (atomicState[this.stateOptions[state]].attributes.name == name) {
-                    _element = atomicState[this.stateOptions[state]];
+               // console.log(atomicState[this.stateOptions[state]].attributes.name);
+                if (atomicState[this.stateOptions[state]].name == name) {
+                     return atomicState[this.stateOptions[state]];
                 }
+            }
             }
 
-            return _element ;
         }
      	this.init = function(){
      		var self = this;
@@ -258,10 +260,7 @@ var jointGraph = (function() {
             }
 
             for (var link in this.linkOptions){
-                if (this.linkOptions[link].parent != undefined) {
-                    this.initConnection(graph,link,this.getElementByName(this.linkOptions[link].source),this.getElementByName(this.linkOptions[link].target),this.getModelByName(this.linkOptions[link].parent));
-                }
-                else{ this.initConnection(graph,link,this.getElementByName(this.linkOptions[link].source),this.getElementByName(this.linkOptions[link].target)); }
+               this.initConnection(graph,link,this.getElementByName(this.linkOptions[link].source,"state"),this.getElementByName(this.linkOptions[link].target,"state")); 
             }
         var myAdjustVertices = _.partial(this.adjustVertices, graph);
         this.alreadyInit = true;
