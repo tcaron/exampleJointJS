@@ -14,10 +14,10 @@ var jointGraph = (function() {
             // If the cell is a view, find its model.
             cell = cell.model || cell;
             if (cell instanceof joint.dia.Element) {
-                _.chain(graph.getConnectedLinks(cell)).groupBy(function(link) {
+                _.chain(graph.getConnectedLinks(cell)).groupBy(function (link) {
                     // the key of the group is the model id of the link's source or target, but not our cell id.
                     return _.omit([link.get('source').id, link.get('target').id], cell.id)[0];
-                }).each(function(group, key) {
+                }).each(function (group, key) {
                     // If the member of the group has both source and target model adjust vertices.
                     if (key !== 'undefined') adjustVertices(graph, _.first(group));
                 });
@@ -28,7 +28,7 @@ var jointGraph = (function() {
             var trgId = cell.get('target').id || cell.previous('target').id;
             // If one of the ends is not a model, the link has no siblings.
             if (!srcId || !trgId) return;
-            var siblings = _.filter(graph.getLinks(), function(sibling) {
+            var siblings = _.filter(graph.getLinks(), function (sibling) {
                 var _srcId = sibling.get('source').id;
                 var _trgId = sibling.get('target').id;
                 return (_srcId === srcId && _trgId === trgId) || (_srcId === trgId && _trgId === srcId);
@@ -48,7 +48,7 @@ var jointGraph = (function() {
                     var midPoint = g.line(srcCenter, trgCenter).midpoint();
                     var theta = srcCenter.theta(trgCenter);
                     var gap = 60;
-                    _.each(siblings, function(sibling, index) {
+                    _.each(siblings, function (sibling, index) {
                         var offset = gap * Math.ceil(index / 2);
                         var sign = index % 2 ? 1 : -1;
                         var angle = g.toRad(theta + sign * 90);
@@ -61,10 +61,10 @@ var jointGraph = (function() {
             }
         }
 
-        this.LinkWithSameDestination = function(source, target, label, vertices) {
+        this.LinkWithSameDestination = function (source, target, label, vertices) {
             var cell = new joint.shapes.fsa.Arrow({
-                source: {id: source.id },
-                target: { id: target.id },
+                source: {id: source.id},
+                target: {id: target.id},
                 labels: [{
                     position: .5,
                     attrs: {
@@ -80,9 +80,9 @@ var jointGraph = (function() {
         }
 
         var atomicModels = {};
-        this.initModel = function (model,graph,parent) {
-        var parent = parent || undefined ;
-        atomicModels[this.modelOptions[model]] =  new joint.shapes.devs.Model({
+        this.initModel = function (model, graph, parent) {
+            var parent = parent || undefined;
+            atomicModels[this.modelOptions[model]] = new joint.shapes.devs.Model({
                 position: {
                     x: this.modelOptions[model].x,
                     y: this.modelOptions[model].y
@@ -95,7 +95,7 @@ var jointGraph = (function() {
                 outPorts: [this.modelOptions[model].out],
                 attrs: {
                     '.label': {
-                        text: this.modelOptions[model].name ,
+                        text: this.modelOptions[model].name,
                         'ref-x': .5,
                         'ref-y': .0
                     },
@@ -105,39 +105,21 @@ var jointGraph = (function() {
                 }
             });
 
-         graph.addCell( atomicModels[this.modelOptions[model]]);
-         if(parent  != undefined) {
-             parent.embed(atomicModels[this.modelOptions[model]]);
-         }
+            graph.addCell(atomicModels[this.modelOptions[model]]);
+            if (parent != undefined) {
+                parent.embed(atomicModels[this.modelOptions[model]]);
+            }
         }
 
         var atomicState = {};
-        this.getElementByName = function(name){
-            for ( var model in this.modelOptions ){
-                if (atomicModels[this.modelOptions[model]].attributes.attrs['.label'].text == name) {
-                    return atomicModels[this.modelOptions[model]];
-                    console.log("model");
-                }
-            }
 
-            for(var state in this.stateOptions){
-                console.log(atomicState[this.stateOptions[state]].attributes.name);
-                if (atomicState[this.stateOptions[state]].name == name) {
-                    return atomicState[this.stateOptions[state]];
+        var atomicLink = {};
+        this.initConnection = function (graph, link, source, target) {
 
-                }
-            }
-
-
-        };
-        var atomicLink={} ;
-        this.initConnection = function(graph, link, source, target){
-            var scr = this.getElementByName(source);
-            var trg = this.getElementByName(target);
-            if ( scr.id !== trg.id) {
+            if (source.id !== target.id) {
                 atomicLink[this.linkOptions[link]] = new joint.shapes.uml.Transition({
-                    source: {id: source}, target: {id: target},
-               });
+                    source: {id: source.id}, target: {id: target.id},
+                });
                 atomicLink[this.linkOptions[link]].label(0, {
                     position: 0.5,
                     attrs: {
@@ -148,7 +130,7 @@ var jointGraph = (function() {
                         }
                     }
                 });
-                if (this.linkOptions[link].dashstroke){
+                if (this.linkOptions[link].dashstroke) {
                     atomicLink[this.linkOptions[link]].attr({
                         '.connection': {
                             stroke: '#4b4a67',
@@ -159,7 +141,7 @@ var jointGraph = (function() {
                 }
             }
             else {
-                atomicLink[this.linkOptions[link]] = this.LinkWithSameDestination(source,target ,this.linkOptions[link].label, [{
+                atomicLink[this.linkOptions[link]] = this.LinkWithSameDestination(source, target, this.linkOptions[link].label, [{
                     x: 350,
                     y: 120
                 }, {
@@ -167,51 +149,67 @@ var jointGraph = (function() {
                     y: 250
                 }]);
             }
-            graph.addCell( atomicLink[this.linkOptions[link]]);
+            graph.addCell(atomicLink[this.linkOptions[link]]);
             atomicLink[this.linkOptions[link]].addTo(graph).reparent();
         }
 
-        this.initState = function(graph,state,parent) {
-            var parent = parent || undefined ;
+        this.initState = function (graph, state, parent) {
+            var parent = parent || undefined;
             atomicState[this.stateOptions[state]] = new joint.shapes.uml.State({
                 position: {
-                    x:this.stateOptions[state].x ,
-                    y:this.stateOptions[state].y
+                    x: this.stateOptions[state].x,
+                    y: this.stateOptions[state].y
                 },
                 size: {
                     width: this.stateOptions[state].width,
                     height: this.stateOptions[state].height
                 },
-                name: this.stateOptions[state].name ,
+                name: this.stateOptions[state].name,
                 events: this.stateOptions[state].events,
             });
             graph.addCell(atomicState[this.stateOptions[state]]);
-            if(parent  != undefined) {
+            if (parent != undefined) {
                 parent.embed(atomicState[this.stateOptions[state]]);
             }
         }
 
-        this.getModelByName = function(name){
-            for ( var model in this.modelOptions ){
-                    if (atomicModels[this.modelOptions[model]].attributes.attrs['.label'].text == name) {
-                        return atomicModels[this.modelOptions[model]];
+        this.getModelByName = function (name) {
+            for (var model in this.modelOptions) {
+                if (atomicModels[this.modelOptions[model]].attributes.attrs['.label'].text == name) {
+                    return atomicModels[this.modelOptions[model]];
                 }
             }
-        };
+        }
+        this.getElemByName = function (graph, name) {
+            var getElem = graph.getElements();
+            var element = "";
+            for (var i = 0; i < getElem.length; i++) {
+                if (getElem[i].attributes.name != undefined) {
+                    if (getElem[i].attributes.name == name)
+                        element = getElem[i];
+                }
+                if (getElem[i].attributes.markup != undefined) {
 
-     	this.init = function(){
-     		var self = this;
-     		var graph = new joint.dia.Graph;
-     		var atomicModel = [];
-       		var paper = new joint.dia.Paper({
-            el: $("#" + this.id),
+                    if (getElem[i].attributes.attrs['.label'].text == name)
+                        element = getElem[i];
+                }
+            }
+            return element;
+        }
+
+        this.init = function () {
+            var self = this;
+            var graph = new joint.dia.Graph;
+            var atomicModel = [];
+            var paper = new joint.dia.Paper({
+                el: $("#" + this.id),
                 width: this.width,
                 height: this.height,
                 gridSize: 1,
                 model: graph,
                 snapLinks: true,
                 linkPinning: false,
-		drawGrid:true,
+                drawGrid: true,
                 embeddingMode: true,
                 highlighting: {
                     'default': {
@@ -235,52 +233,53 @@ var jointGraph = (function() {
                 }
             });
             joint.shapes.devs.Model = joint.shapes.devs.Model.extend({
-            defaults: joint.util.deepSupplement({
-                markup: '<g class="rotatable"><g class="scalable"><rect class="body"/></g><text class="label"/><g class="inPorts"/><g class="outPorts"/></g>',
-                portMarkup: '<g class="port"><path class="port-body" d="M -5 -10 5 -10 5 10 -5 10 z"/></g>',
-                type: 'devs.Model'
-            }, joint.shapes.devs.Model.prototype.defaults)
+                defaults: joint.util.deepSupplement({
+                    markup: '<g class="rotatable"><g class="scalable"><rect class="body"/></g><text class="label"/><g class="inPorts"/><g class="outPorts"/></g>',
+                    portMarkup: '<g class="port"><path class="port-body" d="M -5 -10 5 -10 5 10 -5 10 z"/></g>',
+                    type: 'devs.Model'
+                }, joint.shapes.devs.Model.prototype.defaults)
             });
             joint.shapes.devs.NewModelView = joint.shapes.devs.ModelView;
-	    
-            for(var model in this.modelOptions){
+
+            for (var model in this.modelOptions) {
                 if (this.modelOptions[model].parent != undefined) {
                     this.initModel(model, graph, this.getModelByName(this.modelOptions[model].parent));
                 }
-                else{ this.initModel(model, graph); }
-            }
-            for (var state in this.stateOptions){
-                if (this.stateOptions[state].parent != undefined) {
-                    this.initState(graph,state,this.getModelByName(this.stateOptions[state].parent));
+                else {
+                    this.initModel(model, graph);
                 }
-                else{ this.initState(graph,state); }
             }
-        var getElem = graph.getElements();
-            console.log(getElem);
-            for (var el in getElem){console.log(el);}
-            for (var link in this.linkOptions){
-               this.initConnection(graph,link,this.linkOptions[link].source,this.linkOptions[link].target);
+            for (var state in this.stateOptions) {
+                if (this.stateOptions[state].parent != undefined) {
+                    this.initState(graph, state, this.getModelByName(this.stateOptions[state].parent));
+                }
+                else {
+                    this.initState(graph, state);
+                }
             }
-        var myAdjustVertices = _.partial(this.adjustVertices, graph);
-        this.alreadyInit = true;
-        }	
+                for (var link in this.linkOptions) {
+                    this.initConnection(graph, link, this.getElemByName(graph, this.linkOptions[link].source), this.getElemByName(graph, this.linkOptions[link].target));
+                }
+                var myAdjustVertices = _.partial(this.adjustVertices, graph);
+                this.alreadyInit = true;
+            }
 
-        this.setParam = function(param, valeur, necessary) {
-        	if (typeof necessary === "undefined") necessary = false;
-        	if (typeof valeur !== 'undefined') this[param] = valeur;
-            //les paramètres obligatoires doivent être null par défaut
-        	else if (necessary && this[param] === null) throw new Error("Le paramètre '" + param + "' est manquant.");
-        }
+            this.setParam = function (param, valeur, necessary) {
+                if (typeof necessary === "undefined") necessary = false;
+                if (typeof valeur !== 'undefined') this[param] = valeur;
+                //les paramètres obligatoires doivent être null par défaut
+                else if (necessary && this[param] === null) throw new Error("Le paramètre '" + param + "' est manquant.");
+            }
 
-        this.getParam = function(param, valeur, defaut, necessary) {
-            if (typeof necessary === "undefined") necessary = false;
-            if (typeof valeur !== 'undefined') return valeur;
-            else if (necessary) throw new Error("Le paramètre de configuration '" + param + "' est manquant.");
-            else return defaut;
-        }
-        return this;   
-    };
+            this.getParam = function (param, valeur, defaut, necessary) {
+                if (typeof necessary === "undefined") necessary = false;
+                if (typeof valeur !== 'undefined') return valeur;
+                else if (necessary) throw new Error("Le paramètre de configuration '" + param + "' est manquant.");
+                else return defaut;
+            }
+            return this;
 
+        };
      return function(id,params)
     {
         if (typeof id === 'undefined') throw new Error("Le paramètre 'id' est manquant.");
