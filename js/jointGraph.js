@@ -114,12 +114,14 @@ var jointGraph = (function() {
         var atomicState = {};
 
         var atomicLink = {};
-        this.initConnection = function (graph, link, source, target) {
+        this.initConnection = function (graph, link, source, target, portSource, portTarget) {
 
             if (source.id !== target.id) {
+                
                 atomicLink[this.linkOptions[link]] = new joint.shapes.uml.Transition({
-                    source: {id: source.id}, target: {id: target.id},
+                    source: {id: source.id, port:portSource}, target: {id: target.id, port:portTarget},
                 });
+
                 atomicLink[this.linkOptions[link]].label(0, {
                     position: 0.5,
                     attrs: {
@@ -149,7 +151,6 @@ var jointGraph = (function() {
                     y: 250
                 }]);
             }
-           // graph.addCell(atomicLink[this.linkOptions[link]]);
             atomicLink[this.linkOptions[link]].addTo(graph).reparent();
         }
 
@@ -165,8 +166,9 @@ var jointGraph = (function() {
                     height: this.stateOptions[state].height
                 },
                 name: this.stateOptions[state].name,
-                events: this.stateOptions[state].events,
+                events: this.stateOptions[state].event,
             });
+          
             graph.addCell(atomicState[this.stateOptions[state]]);
             if (parent != undefined) {
                 parent.embed(atomicState[this.stateOptions[state]]);
@@ -258,7 +260,7 @@ var jointGraph = (function() {
                 }
             }
                 for (var link in this.linkOptions) {
-                    this.initConnection(graph, link, this.getElemByName(graph, this.linkOptions[link].source), this.getElemByName(graph, this.linkOptions[link].target));
+                    this.initConnection(graph, link, this.getElemByName(graph, this.linkOptions[link].source), this.getElemByName(graph, this.linkOptions[link].target), this.linkOptions[link].portSource, this.linkOptions[link].portTarget);
                 }
                 var myAdjustVertices = _.partial(this.adjustVertices, graph);
                 this.alreadyInit = true;

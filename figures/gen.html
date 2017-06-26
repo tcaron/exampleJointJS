@@ -30,6 +30,16 @@ modelOptions: [
 'width': 200,
 'in': 'test',
 'out': 'out test',
+},{
+
+'name': 'oui',
+'x': 80,
+'y': 20,
+'height': 200,
+'width': 200,
+'in': 'This',
+'out': 'those',
+
 },
 {
 'name': 'test',
@@ -62,8 +72,19 @@ stateOptions: [
 }
 ], linkOptions: [
 {'source':'firststate',
-  'target': 'cqd'}
+  'target': 'cqd'
+},
+{
+    'source':'test',
+    'target':'firstmod'
+},
 
+{
+    'source':'oui',
+    'portSource':'those',
+    'target':'firstmod',
+    'portTarget':'test',
+},
 
 ]
 });
