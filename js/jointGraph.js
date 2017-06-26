@@ -149,7 +149,7 @@ var jointGraph = (function() {
                     y: 250
                 }]);
             }
-            graph.addCell(atomicLink[this.linkOptions[link]]);
+           // graph.addCell(atomicLink[this.linkOptions[link]]);
             atomicLink[this.linkOptions[link]].addTo(graph).reparent();
         }
 
