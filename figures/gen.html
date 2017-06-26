@@ -20,74 +20,74 @@
     <script>
     $(document).ready(function(){
 
- jointGraph('gen', {
-modelOptions: [
-{
-'name': 'firstmod',
-'x': 20,
-'y': 50,
-'height': 200,
-'width': 200,
-'in': 'test',
-'out': 'out test',
-},{
+             jointGraph('gen', {
+            modelOptions: [
+            {
+            'name': 'firstmod',
+            'x': 20,
+            'y': 50,
+            'height': 200,
+            'width': 200,
+            'in': 'test',
+            'out': 'out test',
+            },{
 
-'name': 'oui',
-'x': 80,
-'y': 20,
-'height': 200,
-'width': 200,
-'in': 'This',
-'out': 'those',
+            'name': 'oui',
+            'x': 80,
+            'y': 20,
+            'height': 200,
+            'width': 200,
+            'in': 'This',
+            'out': 'those',
 
-},
-{
-'name': 'test',
-'parent': 'firstmod',
-'x': 20,
-'y': 50,
-'height': 100,
-'width': 100,
-'in': 'ff',
-'out': 'cc',
-}]
-,
-stateOptions: [
-{
-'name': 'firststate',
-'parent': 'test',
-'event': ["test","oui"],
-'x': 20,
-'y': 50,
-'height': 100,
-'width': 100,
-},
-{
-'name': 'cqd',
-'event': ["test","oui"],
-'x': 30,
-'y': 50,
-'height': 100,
-'width': 100,
-}
-], linkOptions: [
-{'source':'firststate',
-  'target': 'cqd'
-},
-{
-    'source':'test',
-    'target':'firstmod'
-},
+            },
+            {
+            'name': 'test',
+            'parent': 'firstmod',
+            'x': 20,
+            'y': 50,
+            'height': 100,
+            'width': 100,
+            'in': 'ff',
+            'out': 'cc',
+            }]
+            ,
+            stateOptions: [
+            {
+            'name': 'firststate',
+            'parent': 'test',
+            'event': ["test","oui"],
+            'x': 20,
+            'y': 50,
+            'height': 100,
+            'width': 100,
+            },
+            {
+            'name': 'cqd',
+            'event': ["test","oui"],
+            'x': 30,
+            'y': 50,
+            'height': 100,
+            'width': 100,
+            }
+            ], linkOptions: [
+            {'source':'firststate',
+              'target': 'cqd'
+            },
+            {
+                'source':'test',
+                'target':'firstmod'
+            },
 
-{
-    'source':'oui',
-    'portSource':'those',
-    'target':'firstmod',
-    'portTarget':'test',
-},
+            {
+                'source':'oui',
+                'portSource':'those',
+                'target':'firstmod',
+                'portTarget':'test',
+            },
 
-]
-});
-     });
+            ]
+            });
+                 });
     </script>
 </body>

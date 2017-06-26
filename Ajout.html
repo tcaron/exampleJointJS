@@ -46,7 +46,7 @@
         </ul>
     </li>
 </ul>
-<div id="myholder"></div>
+<div id="myholder" style="width:70%;min-height: 600px;"></div>
 <script src="js/jointGraph.js"></script>
 <script type="text/javascript">
 
@@ -65,8 +65,8 @@
 
     var paper = new joint.dia.Paper({
         el: $('#myholder'),
-        width: 1000,
-        height: 1000,
+        width: $('#myholder').width(),
+        height: $('#myholder').height(),
         model: graph,
         gridSize: 1
     });
@@ -103,11 +103,31 @@
 	
 	}
 
-	function Save(){
+    function getElementNameById(id){
 
-        var state = "stateOptions[";
-        var models = "modelOptions[";
-        var link = "linkOptions[";
+        var elements = graph.getElements();
+        for ( var i = 0; i< elements.length;i++)
+        {
+            if ( elements[i].id == id ){
+
+                if ( elements[i].attributes.type == "uml.State")
+                {
+                    return elements[i].attributes.name ; 
+                }
+                if ( elements[i].attributes.type == "devs.Model")
+                {
+                    return elements[i].attributes.attrs['.label'].text ; 
+                }
+            }
+        }
+
+    }
+
+	function SaveObjectJs(){
+
+        var state = "stateOptions:[";
+        var models = ",modelOptions:[";
+        var link = ",linkOptions:[";
 
         for ( var i = 0; i<graph.attributes.cells.models.length;i++ )
         {
@@ -137,7 +157,10 @@
             if (graph.attributes.cells.models[i].attributes.type == "uml.Transition" || 
                 graph.attributes.cells.models[i].attributes.type == "link")
             {
-            console.log(graph.attributes.cells.models[i].attributes.source);
+                
+                link += "{ 'source' : "+getElementNameById(graph.attributes.cells.models[i].attributes.source.id)+",";
+                link += "'target' : "+getElementNameById(graph.attributes.cells.models[i].attributes.target.id)+",";
+             
             }
              
         } 
@@ -147,19 +170,30 @@
         link += "]";
         
 	       
-           // json = JSON.stringify(graph.attributes.cells);
-
-         
-            alert("Save !");
+        json = state+models+link;
+          
         
 	}
 	
-	function Load(){
-	
-	graph.fromJSON(JSON.parse(json));
+	function LoadObjectJs(){
+
+	// chargement du graph avec l'objet js
+    jointGraph('myholder', {json});
 	
 	}
 	   
+    function Save(){
+
+        json = JSON.stringify(graph.attributes.cells);
+        alert("save ! ");
+
+    }
+    function Load(){
+    
+    graph.fromJSON(JSON.parse(json));
+    
+    }
+
 	function Clear(){
 
 	   if(confirm("Are you sure ?")){
