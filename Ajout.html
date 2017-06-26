@@ -13,7 +13,9 @@
     <script src="js/jquery-3.2.0.min.js"></script>
     <script src="js/index.js"></script>
     <script src="js/backbone.js"></script>
-    <script src="js/joint.min.js"></script> </head>
+    <script src="js/joint.min.js"></script> 
+    <script src="js/tooledViewPlugin.js"></script>
+    </head>
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.css">
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css">
     <link rel="stylesheet" href="css/jquery.simplecolorpicker.css">
@@ -40,20 +42,12 @@
         <ul>
             <li><a href="#" onclick="Model()">Add model</a></li>
             <li><a href="#" onclick="Child()">Add children </a></li>
-            <li><a href="#">Lien sous menu 2</a></li>
-            <li><a href="#">Lien sous menu 2</a></li>
-        </ul>
-    </li>
-    <li><a href="#">Lien menu 3</a>
-        <ul>
-            <li><a href="#">Lien sous menu 3</a></li>
-            <li><a href="#">Lien sous menu 3</a></li>
-            <li><a href="#">Lien sous menu 3</a></li>
-            <li><a href="#">Lien sous menu 3</a></li>
+        
         </ul>
     </li>
 </ul>
 <div id="myholder"></div>
+<script src="js/jointGraph.js"></script>
 <script type="text/javascript">
 
 	var graph6 = {"cells":[{"type":"devs.Model","inPorts":[],"outPorts":[],"size":{"width":250,"height":300},"ports":{"groups":{"in":{"position":{"name":"left"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#fff","stroke":"#000","r":10,"magnet":true}},"label":{"position":{"name":"left","args":{"y":10}}}},"out":{"position":{"name":"right"},"attrs":{".port-label":{"fill":"#000"},".port-body":{"fill":"#fff","stroke":"#000","r":10,"magnet":true}},"label":{"position":{"name":"right","args":{"y":10}}}}},"items":[]},"position":{"x":70,"y":70},"angle":0,"id":"0d56e717-b0ec-43a8-b729-65ae624e8284","embeds":["ab5426bb-0cab-4f42-87a5-91954793a29f","6adf84d7-bb81-4cf3-b282-5ccffc5c8b5b","aa4cb702-9108-41e6-bc30-337d5523a5b2"],"z":1,"attrs":{".label":{"text":"WAIT","ref-y":0.9}}},{"type":"uml.State","name":"BUSY_WAIT","events":["+infini"],"position":{"x":120,"y":120},"size":{"width":100,"height":50},"angle":0,"id":"6adf84d7-bb81-4cf3-b282-5ccffc5c8b5b","parent":"0d56e717-b0ec-43a8-b729-65ae624e8284","z":2,"attrs":{".uml-state-separator":{"d":"M 0 20 L 100 20"},".uml-state-name":{"text":"BUSY_WAIT"},".uml-state-events":{"text":"+infini"}}},{"type":"uml.State","name":"FREE_WAIT","events":["+infini"],"position":{"x":170,"y":240},"size":{"width":100,"height":50},"angle":0,"id":"aa4cb702-9108-41e6-bc30-337d5523a5b2","parent":"0d56e717-b0ec-43a8-b729-65ae624e8284","z":3,"attrs":{".uml-state-separator":{"d":"M 0 20 L 100 20"},".uml-state-name":{"text":"FREE_WAIT"},".uml-state-events":{"text":"+infini"}}},{"type":"uml.State","name":"SEND","events":["@tsend"],"position":{"x":420,"y":200},"size":{"width":100,"height":50},"angle":0,"id":"7c088c9c-a8e1-4141-bec3-da10f6173917","z":4,"attrs":{".uml-state-separator":{"d":"M 0 20 L 100 20"},".uml-state-name":{"text":"SEND"},".uml-state-events":{"text":"@tsend"}}},{"type":"fsa.Arrow","smooth":true,"source":{"id":"6adf84d7-bb81-4cf3-b282-5ccffc5c8b5b"},"target":{"id":"6adf84d7-bb81-4cf3-b282-5ccffc5c8b5b"},"labels":[{"position":0.5,"attrs":{"text":{"text":"in?@/{n++}","font-weight":"bold"}}}],"vertices":[{"x":300,"y":40},{"x":370,"y":70}],"id":"ab5426bb-0cab-4f42-87a5-91954793a29f","parent":"0d56e717-b0ec-43a8-b729-65ae624e8284","z":5,"attrs":{}},{"type":"fsa.Arrow","smooth":true,"source":{"id":"7c088c9c-a8e1-4141-bec3-da10f6173917"},"target":{"id":"7c088c9c-a8e1-4141-bec3-da10f6173917"},"labels":[{"position":0.5,"attrs":{"text":{"text":"in?/{n++}","font-weight":"bold"}}}],"vertices":[{"x":400,"y":300},{"x":470,"y":310}],"id":"e1604385-4acd-41a8-baac-4d615d1cde87","z":6,"attrs":{}},{"type":"uml.Transition","source":{"id":"6adf84d7-bb81-4cf3-b282-5ccffc5c8b5b"},"target":{"id":"aa4cb702-9108-41e6-bc30-337d5523a5b2"},"id":"bd7de9f9-fc04-4cb2-a47c-fab6ebd6ade1","labels":[{"position":0.5,"attrs":{"text":{"text":"done? @[n=0]/{p=F}","font-size":14,"font-family":"san-serif"}}}],"z":7,"attrs":{}},{"type":"uml.Transition","source":{"id":"6adf84d7-bb81-4cf3-b282-5ccffc5c8b5b"},"target":{"id":"7c088c9c-a8e1-4141-bec3-da10f6173917"},"id":"9e817482-4029-495c-8d2b-5ed163958cb0","labels":[{"position":0.5,"attrs":{"text":{"text":"done? @/{p=F}","font-size":14,"font-family":"san-serif"}}}],"z":8,"vertices":[{"x":320,"y":185}],"attrs":{}},{"type":"uml.Transition","source":{"id":"7c088c9c-a8e1-4141-bec3-da10f6173917"},"target":{"id":"6adf84d7-bb81-4cf3-b282-5ccffc5c8b5b"},"id":"81978811-39dd-4358-b7e0-6da91b3acf77","labels":[{"position":0.5,"attrs":{"text":{"text":"out!/{n--,p=B}","font-size":14,"font-family":"san-serif"}}}],"z":9,"vertices":[{"x":312.27012048319006,"y":213.9870481880374}],"attrs":{".connection":{"stroke":"#4b4a67","stroke-width":3,"stroke-dasharray":"5 2"}}},{"type":"uml.Transition","source":{"id":"aa4cb702-9108-41e6-bc30-337d5523a5b2"},"target":{"id":"7c088c9c-a8e1-4141-bec3-da10f6173917"},"id":"79b6c3f1-9e78-44a2-ac30-1a621306ca90","labels":[{"position":0.5,"attrs":{"text":{"text":"in?/{n++}","font-size":14,"font-family":"san-serif"}}}],"z":10,"attrs":{}}]};
@@ -71,8 +65,8 @@
 
     var paper = new joint.dia.Paper({
         el: $('#myholder'),
-        width: 480,
-        height: 680,
+        width: 1000,
+        height: 1000,
         model: graph,
         gridSize: 1
     });
@@ -111,8 +105,51 @@
 
 	function Save(){
 
-	   
-            json = JSON.stringify(graph);
+        var state = "stateOptions[";
+        var models = "modelOptions[";
+        var link = "linkOptions[";
+
+        for ( var i = 0; i<graph.attributes.cells.models.length;i++ )
+        {
+            if (graph.attributes.cells.models[i].attributes.type == "uml.State")
+            {
+                state += "{ 'name' :"+graph.attributes.cells.models[i].attributes.name+",";
+                state += "'parent' :'"+graph.attributes.cells.models[i].attributes.name+",";
+                state += "'event' :' ["+graph.attributes.cells.models[i].attributes.events[0]+","+graph.attributes.cells.models[i].attributes.events[1]+"],";
+                state += "'x' :'"+graph.attributes.cells.models[i].attributes.position.x+",";
+                state += "'y' :'"+graph.attributes.cells.models[i].attributes.position.y+",";
+                state += "'height' :'"+graph.attributes.cells.models[i].attributes.size.height+",";
+                state += "'width' :'"+graph.attributes.cells.models[i].attributes.size.width+"},";
+            }
+
+            if (graph.attributes.cells.models[i].attributes.type == "devs.Model")
+            {
+                models += "{'name':"+graph.attributes.cells.models[i].attributes.attrs['.label'].text+",";
+                models += "'x':"+graph.attributes.cells.models[i].attributes.position.x+","; 
+                models += "'y':"+graph.attributes.cells.models[i].attributes.position.y+","; 
+                models += "'width':"+graph.attributes.cells.models[i].attributes.size.width+","; 
+                models += "'height':"+graph.attributes.cells.models[i].attributes.size.height+",";
+                models += "'in':"+graph.attributes.cells.models[i].attributes.inPorts[0]+","; 
+                models += "'out':"+graph.attributes.cells.models[i].attributes.outPorts[0]+",";  
+               
+            }
+
+            if (graph.attributes.cells.models[i].attributes.type == "uml.Transition" || 
+                graph.attributes.cells.models[i].attributes.type == "link")
+            {
+            console.log(graph.attributes.cells.models[i].attributes.source);
+            }
+             
+        } 
+
+        state += "]";
+        models += "]";
+        link += "]";
+        
+	       
+           // json = JSON.stringify(graph.attributes.cells);
+
+         
             alert("Save !");
         
 	}
@@ -224,18 +261,29 @@
 	
 	var name =null ;
 	name = prompt('Enter name','');
-	
+	width = prompt ('Enter a size','');
+    height = prompt('Enter a height','');
+    portIn = prompt ('port in ', '');
+    portOut = prompt('port out','');
+   joint.shapes.devs.Model = joint.shapes.devs.Model.extend({
+                defaults: joint.util.deepSupplement({
+                    markup: '<g class="rotatable"><g class="scalable"><rect class="body"/></g><text class="label"/><g class="inPorts"/><g class="outPorts"/></g>',
+                    portMarkup: '<g class="port"><path class="port-body" d="M -5 -10 5 -10 5 10 -5 10 z"/></g>',
+                    type: 'devs.Model'
+                }, joint.shapes.devs.Model.prototype.defaults)
+            });
+            joint.shapes.devs.NewModelView = joint.shapes.devs.ModelView;
 	 var fig4 = new joint.shapes.devs.Model({
             position: {
                 x: 70,
                 y: 70
             },
             size: {
-                width: 600,
-                height: 600
+                width: width,
+                height: height
             },
-            inPorts: ['in:Job', 'done'],
-            outPorts: ['out'],
+            inPorts: [portIn],
+            outPorts: [portOut],
             attrs: {
                 '.label': {
                     text: name,
